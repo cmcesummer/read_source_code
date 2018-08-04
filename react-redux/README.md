@@ -10,6 +10,8 @@ export { Provider, createProvider, connectAdvanced, connect };
 
 ## Provider
 
+通过 `props` 传入 `store` 。 再通过 `getChildContext() {return { ... }}`, `static childContextTypes { ... }` 向下传递
+
 ```javascript
 const subscriptionKey = `${storeKey}Subscription`;
 const storeKey = "store";
@@ -42,4 +44,31 @@ class Provider extends Component {
 
 ## connect
 
-调用方式 ：``
+调用方式 ：`connect(mapStateToProps, mapDispatchToProps)(Component)`;  
+其中 `mapStateToProps` 的定义方式：
+
+```javascript
+const mapStateToProps = state => {
+    return {
+        todoList: state.todoList
+    };
+};
+```
+
+`mapDispatchToProps` 的定义方式：
+
+```javascript
+const actions = {
+    decrease: (info) => {
+        return {
+            type:'PAGEA/DECREASE'，
+            info
+        }
+    }
+}
+const mapStateToProps = dispatch => {
+    return {
+        decrease: (...args) => dispatch(actions.decrease(...args))
+    };
+};
+```
