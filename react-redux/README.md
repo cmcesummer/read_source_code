@@ -59,10 +59,10 @@ const mapStateToProps = state => {
 
 ```javascript
 const actions = {
-    decrease: (info) => {
+    decrease: (args) => {
         return {
             type:'PAGEA/DECREASE'，
-            info
+            args
         }
     }
 }
