@@ -72,3 +72,28 @@ const mapStateToProps = dispatch => {
     };
 };
 ```
+
+connect: 
+```javascript
+function connect ( mapStateToProps, mapDispatchToProps, mergeProps, {} ) {
+    return connectHOC(selectorFactory, { ... })
+}
+```
+验证下旧版context改变是否会触发render，
+写一下新版context的例子
+
+```javascript
+function combineReducer(obj) {
+    return function (globleState, actions) {
+        let newGlobleState = {},
+            isChange = false;
+        for(let key in obj) {
+            const state = globleState[key];
+            const newState = obj[key](state, actions);
+            newGlobleState[key] = newState;
+            isChange = isChange || newState !== state
+        }
+        return isChange ? newGlobleState : globleState
+    }
+}
+```
