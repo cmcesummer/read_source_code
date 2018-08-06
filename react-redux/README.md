@@ -100,6 +100,38 @@ onStateChange = () => {
         this.setState(dummyState);
     }
 };
+
+render() {
+    // render后就设置成false
+    selector.shouldComponentUpdate = false
+    // ...
+    return (
+        // ...
+    )
+}
+
+function makeSelectorStateful(sourceSelector, store) {
+  // wrap the selector in an object that tracks its results between runs.
+  const selector = {
+    run: function runComponentSelector(props) {
+      try {
+        const nextProps = sourceSelector(store.getState(), props)
+        if (nextProps !== selector.props || selector.error) {
+            // 这里进行比较， 不同设置成 true 可以继续setState
+          selector.shouldComponentUpdate = true
+          // 这里赋值, 下次进行比较
+          selector.props = nextProps
+          selector.error = null
+        }
+      } catch (error) {
+        selector.shouldComponentUpdate = true
+        selector.error = error
+      }
+    }
+  }
+
+  return selector
+}
 ```
 
 `Subscription.js`
@@ -120,6 +152,7 @@ export default class Subscription {
 }
 ```
 
-## TODO
+## createContext
 
-使用 `react.createContext` 实现一个类似 `react-redux` 的功能的库
+React 在新版本提供了新的API。 `React.createContext` 实现一个类似 `react-redux` 的功能的库 [链接](https://github.com/cmcesummer/read_source_code/tree/master/react-redux/src)。 目前共=功能还不完善 缺少一些优化。
+后续继续改进优化， 添加比较。
