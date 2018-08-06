@@ -73,27 +73,53 @@ const mapStateToProps = dispatch => {
 };
 ```
 
-connect: 
+connect:
+只有 `setState` 会触发 render
+
 ```javascript
 function connect ( mapStateToProps, mapDispatchToProps, mergeProps, {} ) {
     return connectHOC(selectorFactory, { ... })
 }
 ```
-验证下旧版context改变是否会触发render，
-写一下新版context的例子
+
+在 `connectAdvanced.js` 中 的 `onStateChange` 方法是通过 `store.subscribe()` 注册到 `listen` 上， 在 `dispatch` 中触发的。  
+给一个空对象 `dummyState = {}` 即可触发 `render`.  
+所以每 connect 一次就会多一个`subscribe`。  
+在这层组件中触发渲染而不是在 `Provider` 中是为了优化性能。 在 `Provider` 中订阅的必然要在 `Provider` 触发 `setState`, 整个应用都会重新 `render` 一遍。 而在 `HOC` 中则只会在该组件重新 `render`。除此之外`HOC`中还会判断是否跟上次的`state`一样， 一样的话就不重新 `render`， 比较的是通过 `mapStateToProps` 返回的属性。
+
+`connectAdvanced.js`
 
 ```javascript
-function combineReducer(obj) {
-    return function (globleState, actions) {
-        let newGlobleState = {},
-            isChange = false;
-        for(let key in obj) {
-            const state = globleState[key];
-            const newState = obj[key](state, actions);
-            newGlobleState[key] = newState;
-            isChange = isChange || newState !== state
-        }
-        return isChange ? newGlobleState : globleState
+const dummyState = {};
+onStateChange = () => {
+    this.selector.run(this.props);
+    if (!this.selector.shouldComponentUpdate) {
+        this.notifyNestedSubs();
+    } else {
+        this.componentDidUpdate = this.notifyNestedSubsOnComponentDidUpdate;
+        this.setState(dummyState);
     }
+};
+```
+
+`Subscription.js`
+
+```javascript
+export default class Subscription {
+    // ...
+    trySubscribe() {
+        if (!this.unsubscribe) {
+            this.unsubscribe = this.parentSub
+                ? this.parentSub.addNestedSub(this.onStateChange)
+                : this.store.subscribe(this.onStateChange);
+
+            this.listeners = createListenerCollection();
+        }
+    }
+    // ...
 }
 ```
+
+## TODO
+
+使用 `react.createContext` 实现一个类似 `react-redux` 的功能的库
