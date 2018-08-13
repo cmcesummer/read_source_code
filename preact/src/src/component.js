@@ -18,27 +18,27 @@ import { enqueueRender } from './render-queue';
  * }
  */
 export function Component(props, context) {
-	this._dirty = true;
+    this._dirty = true;
 
 	/**
 	 * @public
 	 * @type {object}
 	 */
-	this.context = context;
+    this.context = context;
 
 	/**
 	 * @public
 	 * @type {object}
 	 */
-	this.props = props;
+    this.props = props;
 
 	/**
 	 * @public
 	 * @type {object}
 	 */
-	this.state = this.state || {};
+    this.state = this.state || {};
 
-	this._renderCallbacks = [];
+    this._renderCallbacks = [];
 }
 
 
@@ -50,13 +50,13 @@ extend(Component.prototype, {
 	 * @param {() => void} callback A function to be called once component state is
 	 * 	updated
 	 */
-	setState(state, callback) {
-		let s = this.state;
-		if (!this.prevState) this.prevState = extend({}, s);
-		extend(s, typeof state==='function' ? state(s, this.props) : state);
-		if (callback) this._renderCallbacks.push(callback);
-		enqueueRender(this);
-	},
+    setState(state, callback) {
+        let s = this.state;
+        if (!this.prevState) this.prevState = extend({}, s);
+        extend(s, typeof state === 'function' ? state(s, this.props) : state);
+        if (callback) this._renderCallbacks.push(callback);
+        enqueueRender(this);
+    },
 
 
 	/**
@@ -65,10 +65,10 @@ extend(Component.prototype, {
 	 * 	re-rendered.
 	 * @private
 	 */
-	forceUpdate(callback) {
-		if (callback) this._renderCallbacks.push(callback);
-		renderComponent(this, FORCE_RENDER);
-	},
+    forceUpdate(callback) {
+        if (callback) this._renderCallbacks.push(callback);
+        renderComponent(this, FORCE_RENDER);
+    },
 
 
 	/**
@@ -81,6 +81,6 @@ extend(Component.prototype, {
 	 *  ancestor's `getChildContext()`
 	 * @returns {import('./vnode').VNode | void}
 	 */
-	render() {}
+    render() { }
 
 });

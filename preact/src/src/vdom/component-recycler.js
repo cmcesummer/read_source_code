@@ -15,8 +15,8 @@ const components = {};
  * @param {Component} component The component to collect
  */
 export function collectComponent(component) {
-	let name = component.constructor.name;
-	(components[name] || (components[name] = [])).push(component);
+    let name = component.constructor.name;
+    (components[name] || (components[name] = [])).push(component);
 }
 
 
@@ -29,38 +29,40 @@ export function collectComponent(component) {
  * @returns {import('../component').Component}
  */
 export function createComponent(Ctor, props, context) {
-	// 参数 vnode.nodeName, props, context   Ctor 应该是个 func
-	// 初次 render 时 list 应该是 undefined
-	let list = components[Ctor.name],
-		inst;
+    // 参数 vnode.nodeName, props, context   Ctor 应该是个 func
+    // 初次 render 时 list 应该是 undefined
+    let list = components[Ctor.name],
+        inst;
 
-	if (Ctor.prototype && Ctor.prototype.render) {
-		inst = new Ctor(props, context);
-		// 这里的作用是什么 重新赋值属性 防止被覆盖吗 
-		Component.call(inst, props, context);
-	}
-	else {
-		inst = new Component(props, context);
-		inst.constructor = Ctor;
-		inst.render = doRender;
-	}
+    if (Ctor.prototype && Ctor.prototype.render) {
+        inst = new Ctor(props, context);
+        // 这里的作用是什么 重新赋值属性 防止被覆盖吗 
+        // 作用明显是 把 props context 赋值给 inst 的 this 
+        // 但是我觉得没有这个也行啊 ？？？？ 
+        Component.call(inst, props, context);
+    }
+    else {
+        inst = new Component(props, context);
+        inst.constructor = Ctor;
+        inst.render = doRender;
+    }
 
-	// 初次 render 不走
-	if (list) {
-		for (let i=list.length; i--; ) {
-			if (list[i].constructor===Ctor) {
-				inst.nextBase = list[i].nextBase;
-				list.splice(i, 1);
-				break;
-			}
-		}
-	}
-	// 返回实例化对象
-	return inst;
+    // 初次 render 不走
+    if (list) {
+        for (let i = list.length; i--;) {
+            if (list[i].constructor === Ctor) {
+                inst.nextBase = list[i].nextBase;
+                list.splice(i, 1);
+                break;
+            }
+        }
+    }
+    // 返回实例化对象
+    return inst;
 }
 
 
 /** The `.render()` method for a PFC backing instance. */
 function doRender(props, state, context) {
-	return this.constructor(props, context);
+    return this.constructor(props, context);
 }
