@@ -18,7 +18,7 @@ class A extends Component {
             <div id="foo">
                 <B />
                 <button onClick={this.onClick}>
-                    <span>Click Me</span>{" "}
+                    <span>___</span>{" "}
                 </button>
                 <div>{this.state.context}</div>
             </div>
@@ -30,7 +30,7 @@ class B extends Component {
     render() {
         return (
             <div>
-                <span>Hello, world!</span>
+                <span>MESSAGE_MESSAGE</span>
             </div>
         );
     }

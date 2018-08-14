@@ -1,7 +1,7 @@
-import { FORCE_RENDER } from './constants';
-import { extend } from './util';
-import { renderComponent } from './vdom/component';
-import { enqueueRender } from './render-queue';
+import { FORCE_RENDER } from "./constants";
+import { extend } from "./util";
+import { renderComponent } from "./vdom/component";
+import { enqueueRender } from "./render-queue";
 /**
  * Base Component class.
  * Provides `setState()` and `forceUpdate()`, which trigger rendering.
@@ -18,46 +18,44 @@ import { enqueueRender } from './render-queue';
  * }
  */
 export function Component(props, context) {
-    this._dirty = true;
+	this._dirty = true;
 
 	/**
 	 * @public
 	 * @type {object}
 	 */
-    this.context = context;
+	this.context = context;
 
 	/**
 	 * @public
 	 * @type {object}
 	 */
-    this.props = props;
+	this.props = props;
 
 	/**
 	 * @public
 	 * @type {object}
 	 */
-    this.state = this.state || {};
+	this.state = this.state || {};
 
-    this._renderCallbacks = [];
+	this._renderCallbacks = [];
 }
 
-
 extend(Component.prototype, {
-
 	/**
 	 * Update component state and schedule a re-render.
 	 * @param {object} state A hash of state properties to update with new values
 	 * @param {() => void} callback A function to be called once component state is
 	 * 	updated
+	 * 挂在原型链上的方法就这三个
 	 */
-    setState(state, callback) {
-        let s = this.state;
-        if (!this.prevState) this.prevState = extend({}, s);
-        extend(s, typeof state === 'function' ? state(s, this.props) : state);
-        if (callback) this._renderCallbacks.push(callback);
-        enqueueRender(this);
-    },
-
+	setState(state, callback) {
+		let s = this.state;
+		if (!this.prevState) this.prevState = extend({}, s);
+		extend(s, typeof state === "function" ? state(s, this.props) : state);
+		if (callback) this._renderCallbacks.push(callback);
+		enqueueRender(this);
+	},
 
 	/**
 	 * Immediately perform a synchronous re-render of the component.
@@ -65,11 +63,10 @@ extend(Component.prototype, {
 	 * 	re-rendered.
 	 * @private
 	 */
-    forceUpdate(callback) {
-        if (callback) this._renderCallbacks.push(callback);
-        renderComponent(this, FORCE_RENDER);
-    },
-
+	forceUpdate(callback) {
+		if (callback) this._renderCallbacks.push(callback);
+		renderComponent(this, FORCE_RENDER);
+	},
 
 	/**
 	 * Accepts `props` and `state`, and returns a new Virtual DOM tree to build.
@@ -81,6 +78,5 @@ extend(Component.prototype, {
 	 *  ancestor's `getChildContext()`
 	 * @returns {import('./vnode').VNode | void}
 	 */
-    render() { }
-
+	render() {}
 });
