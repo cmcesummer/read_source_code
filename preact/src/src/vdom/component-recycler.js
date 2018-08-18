@@ -42,6 +42,7 @@ export function createComponent(Ctor, props, context) {
         Component.call(inst, props, context);
     }
     else {
+        // 这个是处理 function 组件用的
         inst = new Component(props, context);
         inst.constructor = Ctor;
         inst.render = doRender;
