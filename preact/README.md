@@ -33,7 +33,7 @@
 - `setComponentProps` ：   
 对context 和 props 的操作，然后调用 renderComponent.  调用改方法的地方只有 renderComponent 和 buildComponentFromVNode。
 - `renderComponent`：    
-调用该方法的地方只有： `setComponentProps`. 这个函数里有一些生命周期的钩子函数，以及context的赋值等。作用是把 `diff`函数生成的dom挂到传入的第一个参数 component的 base 属性上，component是Component的实例化。是第一次渲染 还是 update 是根据 component 是不是存在 base 属性 判断的。      
+调用该方法的地方只有： `setComponentProps`. 这个函数里有一些生命周期的钩子函数，以及context的赋值等。作用是把 `diff`函数生成的dom挂到传入的第一个参数 component的 base 属性上，component是Component的实例化。是第一次渲染 还是 update 是根据 component 是不是存在 base 属性 判断的。当更新的时候进行 dom 与 vnode 的循环比较的dom是 component的base属性是这个 dom.      
 - `buildComponentFromVNode`:     
 当 nodeName 是 function 时 ，比如 `<Modal>`这种调用这个方法，这个方法中实例化 这个function , 然后当做第一个参数传参，调用 `setComponentProps`继续渲染。  
 
