@@ -1,6 +1,5 @@
-import { toWarnDev, returnFalse,returnTrue } from "./util";
+import { toWarnDev, returnFalse, returnTrue } from "./util";
 import { Renderer } from "./createRenderer";
-
 
 export const fakeObject = {
     enqueueSetState: returnFalse,
@@ -14,7 +13,7 @@ export const fakeObject = {
  */
 export function Component(props, context) {
     //防止用户在构造器生成JSX
-    
+
     Renderer.currentOwner = this;
     this.context = context;
     this.props = props;
@@ -23,13 +22,12 @@ export function Component(props, context) {
     this.state = null;
 }
 
-
 Component.prototype = {
     constructor: Component, //必须重写constructor,防止别人在子类中使用Object.getPrototypeOf时找不到正确的基类
     replaceState() {
         toWarnDev("replaceState", true);
     },
-    isReactComponent:returnTrue,
+    isReactComponent: returnTrue,
     isMounted() {
         toWarnDev("isMounted", true);
         return this.updater.isMounted(this);
@@ -44,4 +42,3 @@ Component.prototype = {
         throw "must implement render";
     }
 };
-

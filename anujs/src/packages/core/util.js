@@ -10,9 +10,7 @@ export const topNodes = [];
 export const emptyArray = [];
 export const emptyObject = {};
 
-export const REACT_ELEMENT_TYPE = hasSymbol
-    ? Symbol["for"]("react.element")
-    : 0xeac7;
+export const REACT_ELEMENT_TYPE = hasSymbol ? Symbol["for"]("react.element") : 0xeac7;
 
 export function noop() {}
 
@@ -47,8 +45,8 @@ export let __type = Object.prototype.toString;
 var fakeWindow = {};
 export function getWindow() {
     try {
-        if(!window){
-            throw "no window"
+        if (!window) {
+            throw "no window";
         }
         return window;
     } catch (e) {
