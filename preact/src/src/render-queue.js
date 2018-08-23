@@ -15,6 +15,8 @@ let items = [];
  */
 export function enqueueRender(component) {
 	if (!component._dirty && (component._dirty = true) && items.push(component) == 1) {
+		// 这里使用 defer 是为了把多个state更改放到一起去更新  
+		// items.push(component) == 1  第二次 setState就不走render了，上面的判断条件为 false
 		(options.debounceRendering || defer)(rerender);
 	}
 }

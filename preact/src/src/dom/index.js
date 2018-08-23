@@ -93,6 +93,7 @@ export function setAccessor(node, name, old, value, isSvg) {
 		if (value) node.innerHTML = value.__html || '';
 	}
 	else if (name[0]=='o' && name[1]=='n') {
+		// 判断on 就添加事件，这里实现只是添加原生事件，不能代理，react是自己定义的事件，不过这里倒是做了个集合
 		let useCapture = name !== (name=name.replace(/Capture$/, ''));
 		name = name.toLowerCase().substring(2);
 		if (value) {
@@ -134,5 +135,6 @@ export function setAccessor(node, name, old, value, isSvg) {
  * @private
  */
 function eventProxy(e) {
+	// 这里的 options.event 在哪添加的
 	return this._listeners[e.type](options.event && options.event(e) || e);
 }
