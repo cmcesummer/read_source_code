@@ -1,13 +1,6 @@
 import { diffProps } from "./props";
 import { document, NAMESPACE } from "./browser";
-import {
-    get,
-    noop,
-    extend,
-    emptyObject,
-    topNodes,
-    topFibers
-} from "react-core/util";
+import { get, noop, extend, emptyObject, topNodes, topFibers } from "react-core/util";
 import { Renderer, createRenderer } from "react-core/createRenderer";
 import { render, createContainer } from "react-fiber/scheduleWork";
 import { duplexAction, fireDuplex } from "./duplex";
@@ -37,12 +30,7 @@ export function createElement(vnode) {
 
         default:
             do {
-                var s =
-                    p.name == "AnuPortal"
-                        ? p.props.parent
-                        : p.tag === 5
-                            ? p.stateNode
-                            : null;
+                var s = p.name == "AnuPortal" ? p.props.parent : p.tag === 5 ? p.stateNode : null;
                 if (s) {
                     ns = s.namespaceURI;
                     if (p.type === "foreignObject" || ns === NAMESPACE.xhtml) {
@@ -67,9 +55,7 @@ export function createElement(vnode) {
     let inputType = props && props.type; //IE6-8下立即设置type属性
     if (inputType && elem.uniqueID) {
         try {
-            elem = document.createElement(
-                "<" + type + " type='" + inputType + "'/>"
-            );
+            elem = document.createElement("<" + type + " type='" + inputType + "'/>");
         } catch (e2) {
             /*skip*/
         }
@@ -108,9 +94,7 @@ function insertElement(fiber) {
     let { stateNode: dom, parent } = fiber;
 
     try {
-        let insertPoint = fiber.forwardFiber
-            ? fiber.forwardFiber.stateNode
-            : null;
+        let insertPoint = fiber.forwardFiber ? fiber.forwardFiber.stateNode : null;
         let after = insertPoint ? insertPoint.nextSibling : parent.firstChild;
         if (after == dom) {
             return;

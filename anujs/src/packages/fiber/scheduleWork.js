@@ -1,17 +1,7 @@
 import { reconcileDFS } from "./beginWork";
 import { commitDFS } from "./commitWork";
 import { Renderer } from "react-core/createRenderer";
-import {
-    effects,
-    isMounted,
-    resetStack,
-    arrayPush,
-    get,
-    isFn,
-    topNodes,
-    typeNumber,
-    topFibers
-} from "react-core/util";
+import { effects, isMounted, resetStack, arrayPush, get, isFn, topNodes, typeNumber, topFibers } from "react-core/util";
 import { Unbatch } from "./unbatch";
 import { Fiber } from "./Fiber";
 
@@ -248,6 +238,7 @@ function updateComponent(instance, state, callback, immediateUpdate) {
     let fiber = get(instance);
     fiber.dirty = true;
 
+    // Object typeNumber = 8
     let sn = typeNumber(state);
     let isForced = state === true;
     let microtasks = getQueue(fiber);
@@ -300,6 +291,7 @@ export function createContainer(root, onlyGet, validate) {
     }
     let container = new Fiber({
         stateNode: root,
+        // 顶部根节点的 tag 为5
         tag: 5,
         name: "hostRoot",
         //contextStack的对象 总是它的后面的元素的并集 ［dUcUbUa, cUbUa, bUa, a, {}］

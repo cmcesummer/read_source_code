@@ -5,12 +5,7 @@ import { PureComponent } from "react-core/PureComponent";
 import { createRef, forwardRef } from "react-core/createRef";
 import { createPortal } from "react-core/createPortal";
 import { createContext } from "react-core/createContext";
-import {
-    createElement,
-    cloneElement,
-    isValidElement,
-    createFactory
-} from "react-core/createElement";
+import { createElement, cloneElement, isValidElement, createFactory } from "react-core/createElement";
 import { Fragment, getWindow } from "react-core/util";
 
 import { findDOMNode } from "./findDOMNode";
@@ -21,12 +16,7 @@ let React;
 if (prevReact && prevReact.eventSystem) {
     React = prevReact; //解决引入多个
 } else {
-    let {
-        render,
-        eventSystem,
-        unstable_renderSubtreeIntoContainer,
-        unmountComponentAtNode
-    } = DOMRenderer;
+    let { render, eventSystem, unstable_renderSubtreeIntoContainer, unmountComponentAtNode } = DOMRenderer;
 
     React = win.React = win.ReactDOM = {
         //平台相关API
