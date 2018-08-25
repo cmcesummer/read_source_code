@@ -44,7 +44,7 @@ export function render(vnode, root, callback) {
 }
 
 function wrapCb(fn, carrier) {
-    return function() {
+    return function () {
         let fiber = get(this);
         let target = fiber.child ? fiber.child.stateNode : null;
         fn && fn.call(target);
@@ -64,7 +64,7 @@ function performWork(deadline) {
         boundaries.length = 0;
     }
 
-    topFibers.forEach(function(el) {
+    topFibers.forEach(function (el) {
         let microtasks = el.microtasks;
         while ((el = microtasks.shift())) {
             if (!el.disposed) {
@@ -88,13 +88,13 @@ let deadline = {
 function requestIdleCallback(fn) {
     fn(deadline);
 }
-Renderer.scheduleWork = function() {
+Renderer.scheduleWork = function () {
     performWork(deadline);
 };
 
 let isBatching = false;
 
-Renderer.batchedUpdates = function(callback, event) {
+Renderer.batchedUpdates = function (callback, event) {
     let keepbook = isBatching;
     isBatching = true;
     try {
@@ -197,7 +197,7 @@ function getQueue(fiber) {
 function pushChildQueue(fiber, queue) {
     //判定当前节点是否包含已进队的节点
     let maps = {};
-    for (let i = queue.length, el; (el = queue[--i]); ) {
+    for (let i = queue.length, el; (el = queue[--i]);) {
         //移除列队中比它小的组件
         if (fiber === el) {
             queue.splice(i, 1); //已经放进过，去掉
@@ -225,7 +225,7 @@ function pushChildQueue(fiber, queue) {
             }
         }
     }
-    hackSCU.forEach(function(el) {
+    hackSCU.forEach(function (el) {
         //如果是批量更新，必须强制更新，防止进入SCU
         el.updateQueue.batching = true;
     });
@@ -277,6 +277,7 @@ export function createContainer(root, onlyGet, validate) {
     //像IE6-8，文本节点不能添加属性
     if (useProp) {
         root.anuProp = void 0;
+        // get () => key._reactInternalFiber
         if (get(root)) {
             return get(root);
         }
