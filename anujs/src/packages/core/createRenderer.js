@@ -15,7 +15,7 @@ export const Renderer = {
             middlewares.push(obj);
         }
     },
-    updateControlled() {},
+    updateControlled() { },
     fireMiddlewares(begin) {
         let index = begin ? middlewares.length - 1 : 0,
             delta = begin ? -1 : 1,

@@ -8,6 +8,7 @@ export function UpdateQueue() {
         pendingCbs: []
     };
 }
+//  这个的作用就是实例化组件， 并返回实例
 export function createInstance(fiber, context) {
     let updater = {
         mountOrder: Renderer.mountOrder++,
@@ -57,7 +58,7 @@ export function createInstance(fiber, context) {
             Renderer.currentOwner = instance;
             if (type.render) {
                 //forwardRef函数形式只会执行一次，对象形式执行多次
-                instance.render = function() {
+                instance.render = function () {
                     return type.render(this.props, this.ref);
                 };
             } else {
@@ -66,6 +67,7 @@ export function createInstance(fiber, context) {
             }
         } else {
             // 有狀态组件
+            // 实例化
             instance = new type(props, context);
             if (!(instance instanceof Component)) {
                 throw `${type.name} doesn't extend React.Component`;

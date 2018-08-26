@@ -12,7 +12,7 @@ export const emptyObject = {};
 
 export const REACT_ELEMENT_TYPE = hasSymbol ? Symbol["for"]("react.element") : 0xeac7;
 
-export function noop() {}
+export function noop() { }
 
 export function Fragment(props) {
     return props.children;
@@ -80,7 +80,7 @@ export function extend(obj, props) {
 }
 
 export function inherit(SubClass, SupClass) {
-    function Bridge() {}
+    function Bridge() { }
     let orig = SubClass.prototype;
     Bridge.prototype = SupClass.prototype;
     let fn = (SubClass.prototype = new Bridge());
@@ -92,22 +92,23 @@ export function inherit(SubClass, SupClass) {
 try {
     //微信小程序不支持Function
     var supportEval = Function("a", "return a + 1")(2) == 3;
-} catch (e) {}
+} catch (e) { }
 export function miniCreateClass(ctor, superClass, methods, statics) {
     let className = ctor.name || "IEComponent";
     let Ctor = supportEval
+        // 这里用 这个 Function 是什么原因  直接组合寄生式继承不行吗， 再改一下unbatch？
         ? Function(
-              "superClass",
-              "ctor",
-              `return function ${className} (props, context) {
+            "superClass",
+            "ctor",
+            `return function ${className} (props, context) {
             superClass.apply(this, arguments); 
             ctor.apply(this, arguments);
       }`
-          )(superClass, ctor)
+        )(superClass, ctor)
         : function ReactInstance() {
-              superClass.apply(this, arguments);
-              ctor.apply(this, arguments);
-          };
+            superClass.apply(this, arguments);
+            ctor.apply(this, arguments);
+        };
     Ctor.displayName = className;
     var fn = inherit(Ctor, superClass);
     extend(fn, methods);
@@ -149,7 +150,7 @@ export function camelize(target) {
         return target;
     }
     //转换为驼峰风格
-    let str = target.replace(rcamelize, function(match) {
+    let str = target.replace(rcamelize, function (match) {
         return match.charAt(1).toUpperCase();
     });
     return firstLetterLower(str);
@@ -182,7 +183,7 @@ export function typeNumber(data) {
 
 export let toArray =
     Array.from ||
-    function(a) {
+    function (a) {
         let ret = [];
         for (let i = 0, n = a.length; i < n; i++) {
             ret[i] = a[i];

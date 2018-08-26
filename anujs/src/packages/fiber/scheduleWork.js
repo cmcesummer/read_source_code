@@ -11,9 +11,12 @@ let boundaries = Renderer.boundaries;
 const batchedtasks = [];
 
 export function render(vnode, root, callback) {
+    // container 是 root 产生的一个 fiber;
     let container = createContainer(root),
         immediateUpdate = false;
     if (!container.hostRoot) {
+        // render要跑起来，需要一个组件，
+        // 因此React.render(vdom, container, cb)中的前两个参数间会嵌入一个内置组件Unbatch
         let fiber = new Fiber({
             type: Unbatch,
             tag: 2,
@@ -28,6 +31,7 @@ export function render(vnode, root, callback) {
         let instance = createInstance(fiber, {});
         container.hostRoot = instance;
         immediateUpdate = true;
+        // 清空 container.stateNode 节点的内容 
         Renderer.emptyElement(container);
     }
     let carrier = {};
@@ -255,6 +259,7 @@ function updateComponent(instance, state, callback, immediateUpdate) {
         immediateUpdate = immediateUpdate || !fiber._hydrating;
         pushChildQueue(fiber, microtasks);
     }
+    // 第一次render： fiber（unbatch的fiber）的updateQueue.pendingStates和pendingCbs都有state cbs
     mergeUpdates(fiber, state, isForced, callback);
     if (immediateUpdate) {
         Renderer.scheduleWork();
