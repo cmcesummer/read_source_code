@@ -30,6 +30,8 @@ import { getInsertPoint, setInsertPoints } from "./insertPoint";
 export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
     var topWork = fiber;
     outerLoop: while (fiber) {
+        // deadline.timeRemaining() => 2 
+        // disposed 好像还没有
         if (fiber.disposed || deadline.timeRemaining() <= ENOUGH_TIME) {
             break;
         }
@@ -129,6 +131,7 @@ function mergeStates(fiber, nextProps) {
     let instance = fiber.stateNode,
         pendings = fiber.updateQueue.pendingStates,
         n = pendings.length,
+        // fiber.memoizedState 保存着 getDerivedStateFromProps 合并后的 state
         state = fiber.memoizedState || instance.state;
     if (n === 0) {
         return state;
@@ -160,6 +163,7 @@ function mergeStates(fiber, nextProps) {
 }
 
 export function updateClassComponent(fiber, info) {
+    // 这里好像只有 reconcileDFS 调用了
     let { type, stateNode: instance, props } = fiber;
     let { contextStack, containerStack } = info;
     let newContext = getMaskedContext(instance, type.contextTypes, contextStack);
@@ -173,9 +177,11 @@ export function updateClassComponent(fiber, info) {
     const isStateful = !instance.__isStateless;
     if (isStateful) {
         //有狀态组件
+        // 这里是 { pendingCbs: [callback], pendingStates:[{child:{...}}] }
         let updateQueue = fiber.updateQueue;
 
         delete fiber.updateFail;
+        // 这里判断有没有渲染过， 渲染过就走更新钩子
         if (fiber.hasMounted) {
             applybeforeUpdateHooks(fiber, instance, props, newContext, contextStack);
         } else {
@@ -183,12 +189,14 @@ export function updateClassComponent(fiber, info) {
         }
 
         if (fiber.memoizedState) {
+            // 更新state
             instance.state = fiber.memoizedState;
         }
         fiber.batching = updateQueue.batching;
         let cbs = updateQueue.pendingCbs;
         if (cbs.length) {
             fiber.pendingCbs = cbs;
+            // ./effectTag
             fiber.effectTag *= CALLBACK;
         }
         if (fiber.ref) {
@@ -248,6 +256,7 @@ function applybeforeMountHooks(fiber, instance, newProps) {
     }
     delete fiber.setout;
     mergeStates(fiber, newProps);
+    // update完了 重置 queue
     fiber.updateQueue = UpdateQueue();
 }
 
@@ -307,6 +316,7 @@ function isSameNode(a, b) {
 }
 
 function setStateByProps(instance, fiber, nextProps, prevState) {
+    // 新 api getDerivedStateFromProps
     fiber.errorHook = gDSFP;
     let fn = fiber.type[gDSFP];
     if (fn) {

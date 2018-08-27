@@ -121,10 +121,12 @@ Renderer.batchedUpdates = function (callback, event) {
 
 function workLoop(deadline) {
     let fiber = macrotasks.shift(),
+        // 第一次 fiber 是那个 unbatch 的 fiber
         info;
     if (fiber) {
         if (fiber.type === Unbatch) {
             info = fiber.return;
+            // info = container 的 fiber
         } else {
             let dom = getContainer(fiber);
             info = {
