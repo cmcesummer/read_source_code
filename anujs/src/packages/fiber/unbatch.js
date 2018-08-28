@@ -13,6 +13,7 @@ export var Unbatch = miniCreateClass(
     Component,
     {
         render() {
+            // Unbatch 的 render 是 App vnode
             return this.state.child;
         }
     }

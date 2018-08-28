@@ -196,10 +196,11 @@ export function updateClassComponent(fiber, info) {
         let cbs = updateQueue.pendingCbs;
         if (cbs.length) {
             fiber.pendingCbs = cbs;
-            // ./effectTag
+            // effectTag 初始值 1  callback 23
             fiber.effectTag *= CALLBACK;
         }
         if (fiber.ref) {
+            // REF = 19
             fiber.effectTag *= REF;
         }
     } else if (type === AnuPortal) {
@@ -232,6 +233,7 @@ export function updateClassComponent(fiber, info) {
         }
 
         delete fiber.dirty;
+        // HOOK = 17 所以 effectTag 是干嘛的
         fiber.effectTag *= HOOK;
     } else {
         fiber.effectTag = WORKING;
@@ -244,6 +246,7 @@ export function updateClassComponent(fiber, info) {
     fiber._hydrating = true;
     Renderer.currentOwner = instance;
     let rendered = applyCallback(instance, "render", []);
+    // 开始 diff
     diffChildren(fiber, rendered);
 }
 
@@ -378,15 +381,16 @@ function getMaskedContext(instance, contextTypes, contextStack) {
 /**
  * 转换vnode为fiber
  * @param {Fiber} parentFiber
- * @param {Any} children
+ * @param {Any} children => 这个是 vnode
  */
 function diffChildren(parentFiber, children) {
-    let oldFibers = parentFiber.children; // 旧的
+    let oldFibers = parentFiber.children; // 旧的 di第一次没有 children
     if (oldFibers) {
         parentFiber.oldChildren = oldFibers;
     } else {
         oldFibers = {};
     }
+    // parentFiber.children = {.0 ：children}
     let newFibers = fiberizeChildren(children, parentFiber); // 新的
     let effects = parentFiber.effects || (parentFiber.effects = []);
     let matchFibers = new Object();
@@ -437,6 +441,7 @@ function diffChildren(parentFiber, children) {
             // 根据 vnode 生成新的 fiber
             newFiber = new Fiber(newFiber);
         }
+        // vnode 替换成 fiber
         newFibers[i] = newFiber;
         newFiber.index = index++;
         newFiber.return = parentFiber;
@@ -446,12 +451,14 @@ function diffChildren(parentFiber, children) {
             newFiber.forward = prevFiber;
         } else {
             parentFiber.child = newFiber;
+            // forward 上一个 fiber 同级
             newFiber.forward = null;
         }
         prevFiber = newFiber;
     }
     parentFiber.lastChild = prevFiber;
     if (prevFiber) {
+        // sibling 下一个 fiber 同级的
         prevFiber.sibling = null;
     }
 }

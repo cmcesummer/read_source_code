@@ -21,3 +21,7 @@ function myNonEssentialWork (deadline) {
 深度优先搜索(DFS, Depth First Search)是一个针对图和树的遍历算法。早在19世纪就被用于解决迷宫问题。    
 DFC的详细解释还是贴个链接吧。 [深度优先搜索](https://blog.csdn.net/saltriver/article/details/54429068)  
 
+### toString(radix)
+
+`number.toString(36)`转换成36进制啊，一般都是为了生成不重复的随机数才调用的.
+
