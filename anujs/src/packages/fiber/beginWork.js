@@ -30,7 +30,7 @@ import { getInsertPoint, setInsertPoints } from "./insertPoint";
 export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
     var topWork = fiber;
     outerLoop: while (fiber) {
-        // deadline.timeRemaining() => 2 
+        // deadline.timeRemaining() => 2
         // disposed 好像还没有
         if (fiber.disposed || deadline.timeRemaining() <= ENOUGH_TIME) {
             break;
@@ -57,6 +57,7 @@ export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
         }
         //如果没有阻断更新，没有出错
         if (fiber.child && !fiber.updateFail && !occurError) {
+            // 这里开始深度优先
             fiber = fiber.child;
             continue outerLoop;
         }
@@ -169,6 +170,7 @@ export function updateClassComponent(fiber, info) {
     let newContext = getMaskedContext(instance, type.contextTypes, contextStack);
     if (instance == null) {
         fiber.parent = type === AnuPortal ? props.parent : containerStack[0];
+        // 这个的作用就是实例化组件，实例上挂_reactInternalFiber等 并返回实例
         instance = createInstance(fiber, newContext);
         cacheContext(instance, contextStack[0], newContext);
     }
@@ -450,6 +452,7 @@ function diffChildren(parentFiber, children) {
             prevFiber.sibling = newFiber;
             newFiber.forward = prevFiber;
         } else {
+            // child 是 parentFiber 下的第一个 子fiber
             parentFiber.child = newFiber;
             // forward 上一个 fiber 同级
             newFiber.forward = null;
