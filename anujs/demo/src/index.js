@@ -15,7 +15,7 @@ class A extends Component {
         });
     };
     render() {
-        return <div id="foo">2</div>;
+        return <div id="foo">{this.state.context}</div>;
     }
 }
 

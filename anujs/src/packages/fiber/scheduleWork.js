@@ -137,6 +137,7 @@ function workLoop(deadline) {
         // 深度优先的 结束
         reconcileDFS(fiber, info, deadline, ENOUGH_TIME);
         updateCommitQueue(fiber);
+        // 保留 info 中 containerStack 和 contextStack 数组的最后一项
         resetStack(info);
         if (macrotasks.length && deadline.timeRemaining() > ENOUGH_TIME) {
             workLoop(deadline); //收集任务
@@ -157,6 +158,7 @@ function updateCommitQueue(fiber) {
             effects.push(fiber);
         }
     } else {
+        // 是一个全局数组
         effects.push(fiber);
     }
     boundaries.length = 0;

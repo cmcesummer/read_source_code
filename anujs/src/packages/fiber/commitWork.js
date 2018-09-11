@@ -66,6 +66,7 @@ function commitDFSImpl(fiber) {
             if (f.effectTag === WORKING) {
                 f.effectTag = NOWORK;
             } else if (f.effectTag > WORKING) {
+                // 去触发 Did 的一些生命周期
                 commitEffects(f);
                 if (f.capturedValues) {
                     f.effectTag = CAPTURE;
@@ -211,7 +212,7 @@ function disposeFiber(fiber, force) {
         if (fiber.tag > 3) {
             domRemoved.push(fiber);
         } else {
-            Renderer.onDispose(fiber)
+            Renderer.onDispose(fiber);
             if (fiber.hasMounted) {
                 stateNode.updater.enqueueSetState = returnFalse;
                 guardCallback(stateNode, "componentWillUnmount", []);
