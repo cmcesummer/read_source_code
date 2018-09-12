@@ -189,7 +189,7 @@ export function updateClassComponent(fiber, info) {
         } else {
             applybeforeMountHooks(fiber, instance, props, newContext, contextStack);
         }
-
+        // 在上边两个函数中 memoizedState_ 已经更新到最新了
         if (fiber.memoizedState) {
             // 更新state
             instance.state = fiber.memoizedState;
@@ -277,6 +277,7 @@ function applybeforeUpdateHooks(fiber, instance, newProps, newContext, contextSt
 
     if (!instance.__useNewHooks) {
         if (propsChanged || contextChanged) {
+            // 如果 props 或者 context 改变了才会触发 cWRP
             let prevState = instance.state;
             callUnsafeHook(instance, "componentWillReceiveProps", [newProps, newContext]);
             if (prevState !== instance.state) {
@@ -285,6 +286,7 @@ function applybeforeUpdateHooks(fiber, instance, newProps, newContext, contextSt
             }
         }
     }
+    // 这是非队列更新的 state 赋值
     let newState = (instance.state = oldState);
     let updateQueue = fiber.updateQueue;
     mergeStates(fiber, newProps);

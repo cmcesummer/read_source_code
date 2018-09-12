@@ -49,7 +49,7 @@ export function dispatchEvent(e, type, endpoint) {
     if (hook && false === hook(e)) {
         return;
     }
-
+    // 触发批量更新
     Renderer.batchedUpdates(function() {
         let paths = collectPaths(e.target, terminal, {});
         let captured = bubble + "capture";
@@ -274,11 +274,7 @@ eventPropHooks.click = function(e) {
 };
 
 const fixWheelType =
-    document.onwheel !== void 666
-        ? "wheel"
-        : "onmousewheel" in document
-            ? "mousewheel"
-            : "DOMMouseScroll";
+    document.onwheel !== void 666 ? "wheel" : "onmousewheel" in document ? "mousewheel" : "DOMMouseScroll";
 eventHooks.wheel = function(dom) {
     addEvent(dom, fixWheelType, specialHandles.wheel);
 };

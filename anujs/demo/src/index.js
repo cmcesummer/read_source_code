@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 class A extends Component {
     state = {
-        context: "MESSAGE"
+        context: "2"
     };
     componentDidMount() {
         // console.log(<B />);
@@ -11,11 +11,15 @@ class A extends Component {
     }
     onClick = () => {
         this.setState({
-            context: "MESSAGE_MESSAGE"
+            context: "2323"
         });
     };
     render() {
-        return <div id="foo">{this.state.context}</div>;
+        return (
+            <div id="foo" onClick={this.onClick}>
+                {this.state.context}
+            </div>
+        );
     }
 }
 

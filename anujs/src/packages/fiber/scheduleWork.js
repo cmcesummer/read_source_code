@@ -98,13 +98,16 @@ Renderer.scheduleWork = function() {
 
 let isBatching = false;
 
+// 批量更新 也就是触发 diff 再 渲染
 Renderer.batchedUpdates = function(callback, event) {
     let keepbook = isBatching;
+    // 批量的状态 只有在这里的时候才归到批量设置state中
     isBatching = true;
     try {
         event && Renderer.fireMiddlewares(true);
         return callback(event);
     } finally {
+        // 真正的批量更新在这里， 上边是一起设置状态， 这里是diff
         isBatching = keepbook;
         if (!isBatching) {
             let el;
@@ -114,6 +117,7 @@ Renderer.batchedUpdates = function(callback, event) {
                 }
             }
             event && Renderer.fireMiddlewares();
+            // performWork_
             Renderer.scheduleWork();
         }
     }
@@ -242,21 +246,28 @@ function pushChildQueue(fiber, queue) {
     }
 }
 //setState的实现
+// 调用 setState 时的参数是 当前的组件实例， 新的state
 function updateComponent(instance, state, callback, immediateUpdate) {
+    // get 获取的是 挂在实例上的_reactInternalFiber属性： fiber 对象
     let fiber = get(instance);
+    // 把当前组件标记为 dirty
     fiber.dirty = true;
 
     // Object typeNumber = 8
     let sn = typeNumber(state);
     let isForced = state === true;
+    // 获取当前的 fiber 树上的 微任务
     let microtasks = getQueue(fiber);
 
     state = isForced ? null : sn === 5 || sn === 8 ? state : null;
+    // fiber.setout_在beginWork中设置的
     if (fiber.setout) {
-        // cWM/cWRP中setState， 不放进列队
+        // cWM/cWRP中setState， 不放进列队  也就是 componentWillMount、componentWillUpdate 和 componentWillReceiveProps 中设置 fiber.setout_ = true
         immediateUpdate = false;
     } else if ((isBatching && !immediateUpdate) || fiber._hydrating) {
-        //事件回调，batchedUpdates, 错误边界, cDM/cDU中setState
+        // 这里 isBatching_ 是true 是因为这是事件触发的，在 dom/event.js 中 dispatchEvent_ 触发， 然后走的 Renderer.batchedUpdates_
+        // 事件回调，batchedUpdates, 错误边界, cDM/cDU中setState
+        //  ---------------------   这里有疑问 batchedtasks_ 是如何突然多了的??????????????????????????????????????????
         pushChildQueue(fiber, batchedtasks);
     } else {
         //情况4，在钩子外setState或batchedUpdates中ReactDOM.render一棵新树

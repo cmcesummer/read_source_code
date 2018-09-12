@@ -33,6 +33,8 @@ Component.prototype = {
         return this.updater.isMounted(this);
     },
     setState(state, cb) {
+        // 在 createInstance 中  instance.updater.enqueueSetState = Renderer.updateComponent;  动态修改了enqueueSetState
+        // updateComponent 参数是 当前的组件实例， 新的state
         this.updater.enqueueSetState(this, state, cb);
     },
     forceUpdate(cb) {

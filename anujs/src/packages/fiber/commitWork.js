@@ -85,6 +85,7 @@ function commitDFSImpl(fiber) {
     }
 }
 export function commitDFS(effects) {
+    // 触发批量更新
     Renderer.batchedUpdates(function() {
         var el;
         while ((el = effects.shift())) {
