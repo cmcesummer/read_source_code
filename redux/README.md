@@ -16,6 +16,7 @@ func createStore(reduces, initstate):
         currentState = reduces(currentState, actions)
         ListenArr.forEach(item => item())
         return actions
+    dispatch({type: @@aa@@});
     return {getState, subscribe, dispatch}
 ```
 
@@ -43,6 +44,25 @@ func combineReducers({ ...reducerMap }):
             nextState[key] = newState;
             change = change || newState !== state
         return change ? nextState : totalState
+```
+
+简化一下
+
+```javascript
+function combineReducers(reducers) {
+    return function reduce(allState = {}, actions) {
+        const keyArr = Object.keys(reducers);
+        const newState = {};
+        let change = false;
+        for (let key of keyArr) {
+            const singleState = allState[key];
+            const newSingleState = reducers[key](state, actions);
+            newState[key] = newSingleState;
+            change = change || newSingleState !== singleState;
+        }
+        return change ? newState : allState;
+    };
+}
 ```
 
 这里注意伪代码第 14 行， `change = change || newState !== state` 这就是 reducer 中 return 出的对象不允许在原 state 上改的原因，一定要 `{ ...state, ...other}` 这种方式的原因。
