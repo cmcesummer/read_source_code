@@ -1,25 +1,20 @@
-function quick(array, start, end) {
+function quick(arr, start = 0, end = arr.legth) {
     if (start < end) {
-        let left = start, right = end;
-        const middle = array[left];
+        let left = start,
+            right = end;
+        const middle = arr[left];
         while (left < right) {
-            if (left < right && array[right] > middle) {
+            while (left < right && arr[right] > middle) {
                 right--;
             }
-            array[left] = array[right];
-            if (left < right && array[left] <= middle) {
+            arr[left++] = arr[right];
+            while (left < right && arr[left] <= middle) {
                 left++;
             }
-            array[right] = array[left]
+            arr[right--] = arr[left];
         }
-        array[left] = middle;
-        quick(array, start, left - 1);
-        quick(array, left + 1, end);
+        arr[left] = middle;
+        quick(arr, start, left - 1);
+        quick(arr, left + 1, end);
     }
 }
-
-var arr = [2, 4, 65, 2, 7, 3, 3, 1];
-
-quick(arr, 0, arr.length - 1);
-
-console.log(arr)
