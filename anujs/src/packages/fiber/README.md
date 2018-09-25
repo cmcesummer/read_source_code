@@ -68,12 +68,12 @@ workLoop 相当于浏览器中的 EventLoop, 用于执行 macrotasks 与 micotas
 
 workLoop 里面有两个 DFS 遍历，分别来自 beginWork 的 reconcileDFS, commitWork 的 commitDFS。 reconcile 与 commit 代表了 React16 更新时的两个阶段。
 
-beginWork 中有 updateClassComponent 与 updateHostComponent,分别用于更新组件与 DOM。
+beginWork 中有 updateClassComponent 与 updateHostComponent,分别用于更新组件与 DOM 的 `vnode`。
 
-commitWork 主要是执行 DOM 操作， REF 操作， 组件的回调与错误边界。
+commitWork 主要是执行 DOM 操作， REF 操作， 组件的回调与错误边界。 进行的是 DOM 更新
 
 insertPoint 用于决定 DOM 节点是插入位置。
 
 ErrorBoundary 用于查找`边界组件`，及合成`错误组件`的位置信息。
 
-effectTag 基于质数相除的任务系统。
+effectTag 基于质数相除的任务系统。 这个 基于质数相除 有点牛逼
