@@ -55,9 +55,10 @@ function wrapCb(fn, carrier) {
         carrier.instance = target;
     };
 }
-
+// performWork_ 会像经典 rAF 动画那样递归调整自身，直到耗尽 macrotasks 里面的任务.
 function performWork(deadline) {
-    //更新虚拟DOM与真实环境
+    // 更新虚拟DOM与真实环境
+    // 用于执行 macrotasks 与 micotasks 里面的任务。
     workLoop(deadline);
     //如果更新过程中产生新的任务（setState与gDSFP），它们会放到每棵树的microtasks
     //我们需要再做一次收集，不为空时，递归调用
@@ -99,6 +100,8 @@ Renderer.scheduleWork = function() {
 let isBatching = false;
 
 // 批量更新 也就是触发 diff 再 渲染
+// 这个在 事件系统 里被调用。 事件机制
+// workLoop_ 的最后 commitDFS_ 里也会调用该函数
 Renderer.batchedUpdates = function(callback, event) {
     let keepbook = isBatching;
     // 批量的状态 只有在这里的时候才归到批量设置state中
@@ -118,6 +121,7 @@ Renderer.batchedUpdates = function(callback, event) {
             }
             event && Renderer.fireMiddlewares();
             // performWork_
+            // 只在两个地方调用 一个是这个函数  还一个是  updateComponent_ 函数
             Renderer.scheduleWork();
         }
     }
@@ -138,8 +142,10 @@ function workLoop(deadline) {
                 contextStack: [fiber.stateNode.__unmaskedContext]
             };
         }
-        // 深度优先的 结束
+
+        // 深度优先的 结束; 更新 vdom
         reconcileDFS(fiber, info, deadline, ENOUGH_TIME);
+        // 深度优先结束后开始 更新 dom
         updateCommitQueue(fiber);
         // 保留 info 中 containerStack 和 contextStack 数组的最后一项
         resetStack(info);
@@ -151,7 +157,9 @@ function workLoop(deadline) {
     }
 }
 
+// 干了点啥? 就把 fiber push 到 effects ?
 function updateCommitQueue(fiber) {
+    // 这里的 fiber 是更新后的 fiber
     var hasBoundary = boundaries.length;
     if (fiber.type !== Unbatch) {
         //如果是某个组件更新
@@ -268,6 +276,7 @@ function updateComponent(instance, state, callback, immediateUpdate) {
         // 这里 isBatching_ 是true 是因为这是事件触发的，在 dom/event.js 中 dispatchEvent_ 触发， 然后走的 Renderer.batchedUpdates_
         // 事件回调，batchedUpdates, 错误边界, cDM/cDU中setState
         //  ---------------------   这里有疑问 batchedtasks_ 是如何突然多了的??????????????????????????????????????????
+        // 这里干了点啥？ refs? fiber 还是那个 fiber
         pushChildQueue(fiber, batchedtasks);
     } else {
         //情况4，在钩子外setState或batchedUpdates中ReactDOM.render一棵新树
@@ -276,7 +285,10 @@ function updateComponent(instance, state, callback, immediateUpdate) {
     }
     // 第一次render： fiber（unbatch的fiber）的updateQueue.pendingStates和pendingCbs都有state cbs
     mergeUpdates(fiber, state, isForced, callback);
+    // 上边的方法 把 state 和 cb放到了 fiber.updateQueue 中的 pendingStates / pendingCbs
+    // 所以说在 事件系统中改变state 这个函数的作用 只是 pushChildQueue 和 mergeUpdates 么
     if (immediateUpdate) {
+        // DFS
         Renderer.scheduleWork();
     }
 }

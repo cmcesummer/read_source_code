@@ -28,6 +28,7 @@ var domFns = ["insertElement", "updateContent", "updateAttribute"];
 var domEffects = [PLACE, CONTENT, ATTR];
 var domRemoved = [];
 
+// 这个也是深度优先的遍历
 function commitDFSImpl(fiber) {
     let topFiber = fiber;
     outerLoop: while (true) {
@@ -39,6 +40,7 @@ function commitDFSImpl(fiber) {
         }
         if (fiber.effectTag % PLACE == 0) {
             // DOM节点插入或移除
+            // [3, 5, 7]  ['insertElement_', 'updateContent_', 'updateAttribute_']
             domEffects.forEach(function(effect, i) {
                 if (fiber.effectTag % effect == 0) {
                     Renderer[domFns[i]](fiber);

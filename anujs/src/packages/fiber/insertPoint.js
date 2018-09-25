@@ -1,6 +1,6 @@
 import { PLACE, WORKING, NOWORK } from "./effectTag";
 
-//查找它后面的节点
+// 查找它后面的节点
 export function getInsertPoint(fiber) {
     let parent = fiber.parent;
     while (fiber) {
@@ -27,11 +27,7 @@ export function setInsertPoints(children) {
             child.effectTag = PLACE;
             child.forwardFiber = p.insertPoint;
             p.insertPoint = child;
-            for (
-                let pp = child.return;
-                pp && pp.effectTag === NOWORK;
-                pp = pp.return
-            ) {
+            for (let pp = child.return; pp && pp.effectTag === NOWORK; pp = pp.return) {
                 pp.effectTag = WORKING;
             }
         } else {

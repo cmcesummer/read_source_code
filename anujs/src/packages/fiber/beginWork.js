@@ -36,12 +36,15 @@ export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
             break;
         }
         let occurError;
+        // fiber.tag 代表的是什么
+        // fiber.tag < 3 是走的组件更新
         if (fiber.tag < 3) {
             let keepbook = Renderer.currentOwner;
             try {
                 // 为了性能起见，constructor, render, cWM,cWRP, cWU, gDSFP, render
                 // getChildContext都可能 throw Exception，因此不逐一try catch
                 // 通过fiber.errorHook得知出错的方法
+                // 用于更新组件
                 updateClassComponent(fiber, info); // unshift context
             } catch (e) {
                 occurError = true;
@@ -53,6 +56,7 @@ export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
                 delete fiber.batching;
             }
         } else {
+            // 用于更新DOM
             updateHostComponent(fiber, info); // unshift parent
         }
         //如果没有阻断更新，没有出错
@@ -78,6 +82,7 @@ export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
                     info.contextStack.shift(); // shift context
                 }
                 if (f.hasMounted && instance[gSBU]) {
+                    // before update DOM
                     updater.snapshot = guardCallback(instance, gSBU, [updater.prevProps, updater.prevState]);
                 }
             }
@@ -94,35 +99,43 @@ export function reconcileDFS(fiber, info, deadline, ENOUGH_TIME) {
     }
 }
 
+// DOM 更新
 function updateHostComponent(fiber, info) {
     const { props, tag, alternate: prev } = fiber;
-
+    // alternate 是 旧的 vdom 节点
+    // fiber.stateNode 是挂载在该 fiber 上的真实 dom 节点
     if (!fiber.stateNode) {
         fiber.parent = info.containerStack[0];
         fiber.stateNode = Renderer.createElement(fiber);
     }
+    // parent 是真实 dom
     const parent = fiber.parent;
     /* if (!parent.insertPoint) {
         parent.insertPoint = getInsertPoint(fiber);
     }
     */
 
+    // 下边这两个赋值 是？
     fiber.forwardFiber = parent.insertPoint;
 
     parent.insertPoint = fiber;
+    // 1 = 3
     fiber.effectTag = PLACE;
     if (tag === 5) {
         // 元素节点
         fiber.stateNode.insertPoint = null;
         info.containerStack.unshift(fiber.stateNode);
         fiber.shiftContainer = true;
+        //  3 *= 7
         fiber.effectTag *= ATTR;
         if (fiber.ref) {
             fiber.effectTag *= REF;
         }
+        // 生成了新的 vdom
         diffChildren(fiber, props.children);
     } else {
         if (!prev || prev.props !== props) {
+            //  3 *= 5
             fiber.effectTag *= CONTENT;
         }
     }
@@ -163,10 +176,12 @@ function mergeStates(fiber, nextProps) {
     }
 }
 
+// 用于更新组件
 export function updateClassComponent(fiber, info) {
     // 这里好像只有 reconcileDFS 调用了
     let { type, stateNode: instance, props } = fiber;
     let { contextStack, containerStack } = info;
+    // type 是 组件类, contextTypes 是 type 的静态属性 static ， 合并 context
     let newContext = getMaskedContext(instance, type.contextTypes, contextStack);
     if (instance == null) {
         fiber.parent = type === AnuPortal ? props.parent : containerStack[0];
@@ -226,6 +241,7 @@ export function updateClassComponent(fiber, info) {
 
     if (isStateful) {
         if (fiber.parent && fiber.hasMounted && fiber.dirty) {
+            // 查找它后面的节点
             fiber.parent.insertPoint = getInsertPoint(fiber);
         }
         if (fiber.updateFail) {
@@ -247,8 +263,9 @@ export function updateClassComponent(fiber, info) {
     Renderer.onUpdate(fiber);
     fiber._hydrating = true;
     Renderer.currentOwner = instance;
+    // render 产生新的 vdom
     let rendered = applyCallback(instance, "render", []);
-    // 开始 diff
+    // 把新的 vnode 挂在 fiber 上， 也就是添加 fiber 的child, vnode 的 subling, forward 等属性
     diffChildren(fiber, rendered);
 }
 
@@ -395,6 +412,7 @@ function diffChildren(parentFiber, children) {
         oldFibers = {};
     }
     // parentFiber.children = {.0 ：children}
+    // fiberizeChildren_ 把 fiber.children 由 旧的 变成 新的
     let newFibers = fiberizeChildren(children, parentFiber); // 新的
     let effects = parentFiber.effects || (parentFiber.effects = []);
     let matchFibers = new Object();
@@ -402,6 +420,8 @@ function diffChildren(parentFiber, children) {
     for (let i in oldFibers) {
         let newFiber = newFibers[i];
         let oldFiber = oldFibers[i];
+        // newFiber.type 是标签名 如 A， div 等
+        // 所以 如果标签名没有改变， 这个循环干了点啥
         if (newFiber && newFiber.type === oldFiber.type) {
             matchFibers[i] = oldFiber;
             if (newFiber.key != null) {
@@ -409,6 +429,7 @@ function diffChildren(parentFiber, children) {
             }
             continue;
         }
+        // 当标签名改变后调用函数
         detachFiber(oldFiber, effects);
     }
 
@@ -423,6 +444,7 @@ function diffChildren(parentFiber, children) {
                 //&& !oldFiber.disposed
                 alternate = new Fiber(oldFiber);
                 let oldRef = oldFiber.ref;
+                // 合并 新旧
                 newFiber = extend(oldFiber, newFiber);
                 delete newFiber.disposed;
                 newFiber.alternate = alternate;
@@ -449,9 +471,11 @@ function diffChildren(parentFiber, children) {
         newFibers[i] = newFiber;
         newFiber.index = index++;
         newFiber.return = parentFiber;
-
+        // 在这里处理 fiber 树之间的关系
         if (prevFiber) {
+            // 上个 fiber 的 sibling 就是 下个 fiber 是当前 fiber
             prevFiber.sibling = newFiber;
+            // 当前 fiber 的 forward 就是 上个 fiber 是上个 fiber
             newFiber.forward = prevFiber;
         } else {
             // child 是 parentFiber 下的第一个 子fiber
@@ -461,6 +485,7 @@ function diffChildren(parentFiber, children) {
         }
         prevFiber = newFiber;
     }
+    // 父 fiber 的 lastChild 是当前 fiber
     parentFiber.lastChild = prevFiber;
     if (prevFiber) {
         // sibling 下一个 fiber 同级的

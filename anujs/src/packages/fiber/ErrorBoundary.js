@@ -119,10 +119,7 @@ function findCatchComponent(fiber, names, hook) {
                 }
                 //防止被多次重置children, oldChildren, effectTag
                 if (!boundary.catchError) {
-                    if (
-                        hook == "componentWillUnmount" ||
-                        hook == "componentDidUpdate"
-                    ) {
+                    if (hook == "componentWillUnmount" || hook == "componentDidUpdate") {
                         boundary.effectTag = CAPTURE;
                     } else {
                         boundary.effectTag = effectTag * CAPTURE;

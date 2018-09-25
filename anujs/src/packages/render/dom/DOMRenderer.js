@@ -96,6 +96,7 @@ function insertElement(fiber) {
     try {
         let insertPoint = fiber.forwardFiber ? fiber.forwardFiber.stateNode : null;
         let after = insertPoint ? insertPoint.nextSibling : parent.firstChild;
+        // 如果相等就是插入过了， 就 return
         if (after == dom) {
             return;
         }
@@ -120,9 +121,11 @@ export let DOMRenderer = createRenderer({
     render,
     updateAttribute(fiber) {
         let { props, lastProps, stateNode } = fiber;
+        // diff   innerHTML: 1 children: 1, onDuplex 这三个属性除外的其他 props
         diffProps(stateNode, lastProps || emptyObject, props, fiber);
     },
     updateContent(fiber) {
+        // 更新文本内容
         fiber.stateNode.nodeValue = fiber.props;
     },
     updateControlled: duplexAction,

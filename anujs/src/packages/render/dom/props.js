@@ -71,21 +71,7 @@ let specialSVGPropertyName = {
 };
 
 // 重复属性名的特征值列表
-let repeatedKey = [
-    "et",
-    "ep",
-    "em",
-    "es",
-    "pp",
-    "ts",
-    "td",
-    "to",
-    "lr",
-    "rr",
-    "re",
-    "ht",
-    "gc"
-];
+let repeatedKey = ["et", "ep", "em", "es", "pp", "ts", "td", "to", "lr", "rr", "re", "ht", "gc"];
 
 function createRepaceFn(split) {
     return function(match) {
@@ -134,6 +120,7 @@ export function diffProps(dom, lastProps, nextProps, fiber) {
     let isSVG = fiber.namespaceURI === NAMESPACE.svg;
     let tag = fiber.type;
     let continueProps = skipProps;
+    // rform.test(fiber.type)  属于 textarea|input|select|option
     if (!isSVG && rform.test(fiber.type)) {
         continueProps = duplexProps;
         if (!("onChange" in nextProps)) {
@@ -163,6 +150,7 @@ export function diffProps(dom, lastProps, nextProps, fiber) {
             continue;
         }
         if (!nextProps.hasOwnProperty(name)) {
+            // 处理 lastProp 有 但是 nextProp 没有的属性
             let which = tag + isSVG + name;
             let action = strategyCache[which];
             if (!action) {
@@ -212,9 +200,7 @@ function getPropAction(dom, name, isSVG) {
     if (isBooleanAttr(dom, name)) {
         return "booleanAttr";
     }
-    return name.indexOf("data-") === 0 || dom[name] === void 666
-        ? "attribute"
-        : "property";
+    return name.indexOf("data-") === 0 || dom[name] === void 666 ? "attribute" : "property";
 }
 let builtinStringProps = {
     className: 1,
@@ -243,10 +229,7 @@ export let actionStrategy = {
         patchStyle(dom, lastProps.style || emptyObject, val || emptyObject);
     },
     autoFocus: function(dom) {
-        if (
-            /input|text/i.test(dom.nodeName) ||
-            dom.contentEditable === "true"
-        ) {
+        if (/input|text/i.test(dom.nodeName) || dom.contentEditable === "true") {
             dom.focus();
         }
     },
@@ -262,8 +245,7 @@ export let actionStrategy = {
         // https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#notable-enh
         // a ncements xlinkActuate, xlinkArcrole, xlinkHref, xlinkRole, xlinkShow,
         // xlinkTitle, xlinkType eslint-disable-next-line
-        let method =
-            typeNumber(val) < 3 && !val ? "removeAttribute" : "setAttribute";
+        let method = typeNumber(val) < 3 && !val ? "removeAttribute" : "setAttribute";
         let nameRes = getSVGAttributeName(name);
         if (nameRes.ifSpecial) {
             let prefix = nameRes.name.split(":")[0];
