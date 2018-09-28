@@ -128,6 +128,28 @@ function compose(...funcs) {
 }
 ```
 
+最近看了下 **koa 的中间件 next** 的原理， 这里的 redux 中间件可以这么写会更好理解一些：
+
+```js
+// applyMiddleware dispatch 是这样覆盖的
+dispatch = composeFactory(store.dispatch, ...chain);
+
+// compose.js
+function composeFactory(dispatch, ...chain) {
+    return function compose(...args) {
+        const array = [...chain, dispatch];
+        function inFn(index, ...inFnArgs) {
+            if (index === array.length) return;
+            const fn = array[index];
+            return fn((...nextArgs) => inFn(++index, ...nextArgs))(...inFnArgs);
+        }
+        return inFn(0, ...args);
+    };
+}
+```
+
+函数一层层嵌套， `inFn`的递归， `index`的递增。而且很明显的看出
+
 ## 图示
 
 添加一下我画的实现思路
