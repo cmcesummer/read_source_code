@@ -42,3 +42,7 @@ function returnAndFinally() {
 const returnNumber = returnAndFinally();
 console.log(returnNumber);
 ```
+
+### setState
+
+![为什么会是‘异步’的简单分析](https://juejin.im/post/5b45c57c51882519790c7441)
