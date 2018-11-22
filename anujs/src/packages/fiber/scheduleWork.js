@@ -105,6 +105,8 @@ let isBatching = false;
 Renderer.batchedUpdates = function(callback, event) {
     let keepbook = isBatching;
     // 批量的状态 只有在这里的时候才归到批量设置state中
+    // 这里也是为什么 serState 是部分情况下异步的原因：
+    //     在生命周期中 和 react自定义事件中， 都会走callback,
     isBatching = true;
     try {
         event && Renderer.fireMiddlewares(true);

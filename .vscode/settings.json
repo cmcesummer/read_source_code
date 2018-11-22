@@ -1,5 +1,6 @@
 {
     "prettier.printWidth": 120,
+    "liveServer.settings.port": 7002,
     "[javascript]": {
         "editor.tabSize": 4
     },

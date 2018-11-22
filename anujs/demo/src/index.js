@@ -8,6 +8,10 @@ class A extends Component {
     componentDidMount() {
         // console.log(<B />);
         console.log(this.props.name);
+        setTimeout(() => {
+            this.setState({ time: 3 });
+            console.log(this.state.time);
+        }, 10000);
     }
     onClick = () => {
         this.setState({
