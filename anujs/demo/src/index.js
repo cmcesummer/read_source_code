@@ -8,16 +8,29 @@ class A extends Component {
     componentDidMount() {
         // console.log(<B />);
         console.log(this.props.name);
-        setTimeout(() => {
-            this.setState({ time: 3 });
-            console.log(this.state.time);
-        }, 10000);
+        // setTimeout(() => {
+        //     this.setState({ time: 3 });
+        //     console.log(this.state.time);
+        // }, 10000);
     }
     onClick = () => {
         this.setState({
-            context: "2323"
+            contexts: "2323"
         });
     };
+    
+    static getDerivedStateFromProps(p, s) {
+        console.log(p, s);
+        if(p.name == s.context) {
+            return {
+                context: '222'
+            }
+        } else {
+            return {
+                context: p.name
+            }
+        }
+    }
     render() {
         return (
             <div id="foo" onClick={this.onClick}>
