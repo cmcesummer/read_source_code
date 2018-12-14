@@ -11,7 +11,10 @@ func createStore(reduces, initstate):
     let currentState = initstate
     const getState() => currentState
     const ListenArr = []
-    const subscribe(fn) => ListenArr.push(fn)
+    const subscribe(fn) :
+        ListenArr.push(fn);
+        reutrn () => ListenArr.splice(ListenArr.indexOf(fn), 1)
+
     func dispatch(actions):
         currentState = reduces(currentState, actions)
         ListenArr.forEach(item => item())
@@ -66,6 +69,20 @@ function combineReducers(reducers) {
 ```
 
 这里注意伪代码第 14 行， `change = change || newState !== state` 这就是 reducer 中 return 出的对象不允许在原 state 上改的原因，一定要 `{ ...state, ...other}` 这种方式的原因。
+
+或者再简化一下
+
+```js
+function combineReducers(reducers) {
+    return function reducer(store, action) {
+        const newState = {};
+        for (let key in reducers) {
+            newState[key] = reducers[key](store[key], action);
+        }
+        return newState;
+    };
+}
+```
 
 ## applyMiddleware
 
