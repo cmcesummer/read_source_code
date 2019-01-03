@@ -77,3 +77,5 @@ insertPoint 用于决定 DOM 节点是插入位置。
 ErrorBoundary 用于查找`边界组件`，及合成`错误组件`的位置信息。
 
 effectTag 基于质数相除的任务系统。 这个 基于质数相除 有点牛逼
+
+-   `Renderer.batchedUpdates`只有两个地方调用 一个是 事件系统中， 一个是 `commitWork.js` 中，猜测是生命周期
