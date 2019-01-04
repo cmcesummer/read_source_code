@@ -46,3 +46,7 @@ console.log(returnNumber);
 ### setState
 
 ![为什么会是‘异步’的简单分析](https://juejin.im/post/5b45c57c51882519790c7441)
+
+## TODO
+
+-   [ ] 看什么时候改变的 state, 先 change state 再 diff;
