@@ -277,7 +277,8 @@ function updateComponent(instance, state, callback, immediateUpdate) {
     } else if ((isBatching && !immediateUpdate) || fiber._hydrating) {
         // 这里 isBatching_ 是true 是因为这是事件触发的，在 dom/event.js 中 dispatchEvent_ 触发， 然后走的 Renderer.batchedUpdates_
         // 事件回调，batchedUpdates, 错误边界, cDM/cDU中setState
-        //  ---------------------   这里有疑问 batchedtasks_ 是如何突然多了的??????????????????????????????????????????
+        //  ---------------------   这里有疑问 batchedtasks_ 是如何突然多了的?????????
+        // ----------------------   在 pushChildQueue 中把 fiber push 进去的
         // 这里干了点啥？ refs? fiber 还是那个 fiber
         pushChildQueue(fiber, batchedtasks);
     } else {
