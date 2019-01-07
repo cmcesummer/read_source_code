@@ -287,6 +287,10 @@ function updateComponent(instance, state, callback, immediateUpdate) {
         pushChildQueue(fiber, microtasks);
     }
     // 第一次render： fiber（unbatch的fiber）的updateQueue.pendingStates和pendingCbs都有state cbs
+    // 这里先把最新的 state push 到队列里  `updateQueue.pendingStates`， 等 Renderer.scheduleWork 的时候再更新赋值
+    // 然后再 applybeforeUpdateHooks  applybeforeMountHooks 中合并 
+    //  ---------  需要看看 什么时候调用更新的这个函数 =>  
+    //  Renderer.scheduleWork => workLoop => reconcileDFS => updateClassComponent => applybeforeUpdateHooks
     mergeUpdates(fiber, state, isForced, callback);
     // 上边的方法 把 state 和 cb放到了 fiber.updateQueue 中的 pendingStates / pendingCbs
     // 所以说在 事件系统中改变state 这个函数的作用 只是 pushChildQueue 和 mergeUpdates 么
