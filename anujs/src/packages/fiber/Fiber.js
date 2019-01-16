@@ -7,3 +7,7 @@ export function Fiber(vnode) {
     this.name = type.displayName || type.name || type;
     this.effectTag = 1;
 }
+
+/**
+ * stateNode class 实例化
+ */

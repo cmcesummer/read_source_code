@@ -27,7 +27,7 @@ export function render(vnode, root, callback) {
         });
         fiber.index = 0;
         container.child = fiber;
-        //将updateClassComponent部分逻辑放到这里，我们只需要实例化它
+        //将 updateClassComponent 部分逻辑放到这里，我们只需要实例化它
         let instance = createInstance(fiber, {});
         container.hostRoot = instance;
         immediateUpdate = true;
@@ -294,6 +294,11 @@ function updateComponent(instance, state, callback, immediateUpdate) {
     mergeUpdates(fiber, state, isForced, callback);
     // 上边的方法 把 state 和 cb放到了 fiber.updateQueue 中的 pendingStates / pendingCbs
     // 所以说在 事件系统中改变state 这个函数的作用 只是 pushChildQueue 和 mergeUpdates 么
+    // 当在 setState 调用时，immediateUpdate 这个参数是不传的，所以不走这个 Renderer.scheduleWork，
+    // 而是在 batchedUpdates 中 走 catch 内的 Renderer.scheduleWork，
+    // ----------------
+    // 在 生命周期 和 react自定义事件中触发的 setState, 走 Renderer.batchedUpdates 堆栈，然后设置 isBatching = true,
+    // 当不在上述情况下调用 setState 时， isBatching = false,  immediateUpdate = immediateUpdate || !fiber._hydrating; 这时是true
     if (immediateUpdate) {
         // DFS
         Renderer.scheduleWork();

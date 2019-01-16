@@ -11,7 +11,7 @@ class A extends Component {
         // setTimeout(() => {
         //     this.setState({ time: 3 });
         //     console.log(this.state.time);
-        // }, 10000);
+        // }, 1000);
     }
     onClick = () => {
         this.setState({
