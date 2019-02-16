@@ -13,6 +13,7 @@ class MVVM {
         for (let key in this.data) {
             let value = this.data[key];
             const dep = new dep();
+            // get 的时候绑定监听者， set的时候执行监听者
             Object.defineProperty(this.data, key, {
                 set(newValue) {
                     if (value === newValue) return
