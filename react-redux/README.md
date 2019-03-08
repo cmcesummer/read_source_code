@@ -154,5 +154,9 @@ export default class Subscription {
 
 ## createContext
 
-React 在新版本提供了新的API。 `React.createContext` 实现一个类似 `react-redux` 的功能的库 [链接](https://github.com/cmcesummer/read_source_code/tree/master/react-redux/src)。 目前共=功能还不完善 缺少一些优化。
+React 在新版本提供了新的 API。 `React.createContext` 实现一个类似 `react-redux` 的功能的库 [链接](https://github.com/cmcesummer/read_source_code/tree/master/react-redux/src)。 目前共=功能还不完善 缺少一些优化。
 后续继续改进优化， 添加比较。
+
+## ...
+
+这几天看其他项目看的崩溃了，赶紧来阅读源码压压惊，暗示一下自己不菜鸡
