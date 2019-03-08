@@ -1,5 +1,3 @@
-import verifyPlainObject from '../utils/verifyPlainObject'
-
 export function defaultMergeProps(stateProps, dispatchProps, ownProps) {
   return { ...ownProps, ...stateProps, ...dispatchProps }
 }
@@ -21,9 +19,6 @@ export function wrapMergePropsFunc(mergeProps) {
       } else {
         hasRunOnce = true
         mergedProps = nextMergedProps
-
-        if (process.env.NODE_ENV !== 'production')
-          verifyPlainObject(mergedProps, displayName, 'mergeProps')
       }
 
       return mergedProps

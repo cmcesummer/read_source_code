@@ -1,5 +1,4 @@
 import hoistStatics from 'hoist-non-react-statics'
-import invariant from 'invariant'
 import React, { Component, PureComponent } from 'react'
 import { isValidElementType, isContextConsumer } from 'react-is'
 
@@ -65,40 +64,10 @@ export default function connectAdvanced(
     ...connectOptions
   } = {}
 ) {
-  invariant(
-    renderCountProp === undefined,
-    `renderCountProp is removed. render counting is built into the latest React dev tools profiling extension`
-  )
-
-  invariant(
-    !withRef,
-    'withRef is removed. To access the wrapped instance, use a ref on the connected component'
-  )
-
-  const customStoreWarningMessage =
-    'To use a custom Redux store for specific components, create a custom React context with ' +
-    "React.createContext(), and pass the context object to React Redux's Provider and specific components" +
-    ' like: <Provider context={MyContext}><ConnectedComponent context={MyContext} /></Provider>. ' +
-    'You may also pass a {context : MyContext} option to connect'
-
-  invariant(
-    storeKey === 'store',
-    'storeKey has been removed and does not do anything. ' +
-      customStoreWarningMessage
-  )
 
   const Context = context
 
   return function wrapWithConnect(WrappedComponent) {
-    if (process.env.NODE_ENV !== 'production') {
-      invariant(
-        isValidElementType(WrappedComponent),
-        `You must pass a component to the function returned by ` +
-          `${methodName}. Instead received ${stringifyComponent(
-            WrappedComponent
-          )}`
-      )
-    }
 
     const wrappedComponentName =
       WrappedComponent.displayName || WrappedComponent.name || 'Component'
@@ -193,11 +162,7 @@ export default function connectAdvanced(
     class Connect extends OuterBaseComponent {
       constructor(props) {
         super(props)
-        invariant(
-          forwardRef ? !props.wrapperProps[storeKey] : !props[storeKey],
-          'Passing redux store in props has been removed and does not do anything. ' +
-            customStoreWarningMessage
-        )
+     
         this.selectDerivedProps = makeDerivedPropsSelector()
         this.selectChildElement = makeChildElementSelector()
         this.indirectRenderWrappedComponent = this.indirectRenderWrappedComponent.bind(
@@ -205,29 +170,23 @@ export default function connectAdvanced(
         )
       }
 
+      // 这里为什么不直接 renderWrappedComponent 而是有个中间过渡函数
       indirectRenderWrappedComponent(value) {
-        // calling renderWrappedComponent on prototype from indirectRenderWrappedComponent bound to `this`
         return this.renderWrappedComponent(value)
       }
 
       renderWrappedComponent(value) {
-        invariant(
-          value,
-          `Could not find "store" in the context of ` +
-            `"${displayName}". Either wrap the root component in a <Provider>, ` +
-            `or pass a custom React context provider to <Provider> and the corresponding ` +
-            `React context consumer to ${displayName} in connect options.`
-        )
         const { storeState, store } = value
 
         let wrapperProps = this.props
         let forwardedRef
 
         if (forwardRef) {
+          // 这里wrapperProps没必要重写吧
           wrapperProps = this.props.wrapperProps
           forwardedRef = this.props.forwardedRef
         }
-
+        // 生成 mapstate mapdispatch 等到props上去
         let derivedProps = this.selectDerivedProps(
           storeState,
           wrapperProps,
@@ -237,7 +196,9 @@ export default function connectAdvanced(
 
         return this.selectChildElement(
           WrappedComponent,
+          // children props
           derivedProps,
+          // 透传 ref , 需要父组件上 forwardedRef 属性
           forwardedRef
         )
       }
@@ -271,6 +232,7 @@ export default function connectAdvanced(
 
       forwarded.displayName = displayName
       forwarded.WrappedComponent = WrappedComponent
+      // 合并 类上的东西
       return hoistStatics(forwarded, WrappedComponent)
     }
 

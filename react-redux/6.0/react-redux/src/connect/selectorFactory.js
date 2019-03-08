@@ -105,15 +105,6 @@ export default function finalPropsSelectorFactory(
   const mapDispatchToProps = initMapDispatchToProps(dispatch, options)
   const mergeProps = initMergeProps(dispatch, options)
 
-  if (process.env.NODE_ENV !== 'production') {
-    verifySubselectors(
-      mapStateToProps,
-      mapDispatchToProps,
-      mergeProps,
-      options.displayName
-    )
-  }
-
   const selectorFactory = options.pure
     ? pureFinalPropsSelectorFactory
     : impureFinalPropsSelectorFactory
