@@ -39,6 +39,6 @@ function combineReducers(obj) {
             finMap[key] = nextStateItem;
             change = change || prevStateItem !== nextStateItem;
         }
-        return change ? nextStateItem : prevStateItem;
+        return change ? finMap : state;
     };
 }
