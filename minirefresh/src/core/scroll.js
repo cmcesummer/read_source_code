@@ -1,27 +1,23 @@
-import {
-    requestAnimationFrame,
-} from '../util/raf';
+import { requestAnimationFrame } from "../util/raf";
 
-import {
-    getClientHeightByDom,
-} from '../util/lang';
+import { getClientHeightByDom } from "../util/lang";
 
 /**
  * 一些事件
  */
-const EVENT_INIT = 'initScroll';
-const EVENT_SCROLL = 'scroll';
-const EVENT_PULL = 'pull';
-const EVENT_UP_LOADING = 'upLoading';
-const EVENT_RESET_UP_LOADING = 'resetUpLoading';
-const EVENT_DOWN_LOADING = 'downLoading';
-const EVENT_CANCEL_LOADING = 'cancelLoading';
+const EVENT_INIT = "initScroll";
+const EVENT_SCROLL = "scroll";
+const EVENT_PULL = "pull";
+const EVENT_UP_LOADING = "upLoading";
+const EVENT_RESET_UP_LOADING = "resetUpLoading";
+const EVENT_DOWN_LOADING = "downLoading";
+const EVENT_CANCEL_LOADING = "cancelLoading";
 
 /**
  * 一些hook
  * hook是指挥它会影响逻辑
  */
-const HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
+const HOOK_BEFORE_DOWN_LOADING = "beforeDownLoading";
 
 const PER_SECOND = 1000 / 60;
 
@@ -62,26 +58,19 @@ class Scroll {
         this._initPullUp();
 
         setTimeout(() => {
-            if (this.options.down &&
-                this.options.down.isAuto &&
-                !this.options.down.isLock
-            ) {
+            if (this.options.down && this.options.down.isAuto && !this.options.down.isLock) {
                 // 满足自动下拉,需要判断是否需要动画（仅仅是首次）
                 if (this.options.down.isAllowAutoLoading) {
                     this.triggerDownLoading();
                 } else {
-                    this.events[EVENT_DOWN_LOADING] &&
-                        this.events[EVENT_DOWN_LOADING](true);
+                    this.events[EVENT_DOWN_LOADING] && this.events[EVENT_DOWN_LOADING](true);
                 }
-            } else if (this.options.up &&
-                this.options.up.isAuto &&
-                !this.options.up.isLock) {
+            } else if (this.options.up && this.options.up.isAuto && !this.options.up.isLock) {
                 // 满足上拉，上拉的配置由配置项决定（每一次）
                 this.triggerUpLoading();
             }
 
-            this.events[EVENT_INIT] &&
-                this.events[EVENT_INIT]();
+            this.events[EVENT_INIT] && this.events[EVENT_INIT]();
         });
     }
 
@@ -100,7 +89,7 @@ class Scroll {
 
         // 改变downHight， 这个参数关乎逻辑
         this.downHight = translateY;
-        
+
         if (!this.options.down.isScrollCssTranslate) {
             // 只有允许动画时才会scroll也translate,否则只会改变downHeight
             return;
@@ -116,8 +105,8 @@ class Scroll {
     }
 
     _scrollWrapAnimation() {
-        this.scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
-        this.scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
+        this.scrollWrap.webkitTransitionTimingFunction = "cubic-bezier(0.1, 0.57, 0.1, 1)";
+        this.scrollWrap.transitionTimingFunction = "cubic-bezier(0.1, 0.57, 0.1, 1)";
     }
 
     _initPullDown() {
@@ -128,7 +117,7 @@ class Scroll {
         this._scrollWrapAnimation();
 
         // 触摸开始
-        const touchstartEvent = (e) => {
+        const touchstartEvent = e => {
             if (this.isScrollTo) {
                 // 如果执行滑动事件,则阻止touch事件,优先执行scrollTo方法
                 e.preventDefault();
@@ -142,10 +131,9 @@ class Scroll {
             this.startX = e.touches ? e.touches[0].pageX : e.clientX;
         };
 
-        scrollWrap.addEventListener('touchstart', touchstartEvent);
-        scrollWrap.addEventListener('mousedown', touchstartEvent);
-        
-        
+        scrollWrap.addEventListener("touchstart", touchstartEvent);
+        scrollWrap.addEventListener("mousedown", touchstartEvent);
+
         // 触摸结束
         const touchendEvent = () => {
             const options = this.options;
@@ -159,8 +147,7 @@ class Scroll {
                 } else {
                     // 否则默认重置位置
                     this.translateContentWrap(0, options.down.bounceTime);
-                    this.events[EVENT_CANCEL_LOADING] &&
-                        this.events[EVENT_CANCEL_LOADING]();
+                    this.events[EVENT_CANCEL_LOADING] && this.events[EVENT_CANCEL_LOADING]();
                 }
 
                 this.isMoveDown = false;
@@ -174,12 +161,12 @@ class Scroll {
             this.isBounce = false;
         };
 
-        scrollWrap.addEventListener('touchend', touchendEvent);
-        scrollWrap.addEventListener('mouseup', touchendEvent);
-        scrollWrap.addEventListener('mouseleave', touchendEvent);
+        scrollWrap.addEventListener("touchend", touchendEvent);
+        scrollWrap.addEventListener("mouseup", touchendEvent);
+        scrollWrap.addEventListener("mouseleave", touchendEvent);
 
         // 触摸中
-        const touchmoveEvent = (e) => {
+        const touchmoveEvent = e => {
             const options = this.options;
             let isAllowDownloading = true;
 
@@ -189,20 +176,17 @@ class Scroll {
                 isAllowDownloading = false;
             }
 
-            if (this.startTop !== undefined &&
-                this.startTop <= 0 &&
-                (isAllowDownloading) &&
-                !this.options.down.isLock) {
+            if (this.startTop !== undefined && this.startTop <= 0 && isAllowDownloading && !this.options.down.isLock) {
                 // 列表在顶部且不在加载中，并且没有锁住下拉动画
 
                 // 当前第一个手指距离列表顶部的距离
                 const curY = e.touches ? e.touches[0].pageY : e.clientY;
                 const curX = e.touches ? e.touches[0].pageX : e.clientX;
-                
+
                 // 手指滑出屏幕触发刷新
                 if (curY > docClientHeight) {
                     touchendEvent(e);
-                    
+
                     return;
                 }
 
@@ -264,8 +248,7 @@ class Scroll {
                         this.downHight += diff;
                     }
 
-                    this.events[EVENT_PULL] &&
-                        this.events[EVENT_PULL](this.downHight, downOffset);
+                    this.events[EVENT_PULL] && this.events[EVENT_PULL](this.downHight, downOffset);
 
                     // 执行动画
                     this.translateContentWrap(this.downHight);
@@ -280,26 +263,26 @@ class Scroll {
             }
         };
 
-        scrollWrap.addEventListener('touchmove', touchmoveEvent);
-        scrollWrap.addEventListener('mousemove', touchmoveEvent);
+        scrollWrap.addEventListener("touchmove", touchmoveEvent);
+        scrollWrap.addEventListener("mousemove", touchmoveEvent);
     }
 
     _initPullUp() {
         const scrollWrap = this.scrollWrap;
 
         // 如果是Body上的滑动，需要监听window的scroll
-        const targetScrollDom = (scrollWrap === document.body) ? window : scrollWrap;
+        const targetScrollDom = scrollWrap === document.body ? window : scrollWrap;
 
-        targetScrollDom.addEventListener('scroll', () => {
+        targetScrollDom.addEventListener("scroll", () => {
             const scrollTop = scrollWrap.scrollTop;
             const scrollHeight = scrollWrap.scrollHeight;
             const clientHeight = getClientHeightByDom(scrollWrap);
             const options = this.options;
 
             this.events[EVENT_SCROLL] && this.events[EVENT_SCROLL](scrollTop);
-            
+
             let isAllowUploading = true;
-            
+
             if (this.upLoading) {
                 isAllowUploading = false;
             } else if (!options.down.isAways && this.downLoading) {
@@ -307,9 +290,7 @@ class Scroll {
             }
 
             if (isAllowUploading) {
-                if (!this.options.up.isLock &&
-                    !this.isFinishUp &&
-                    scrollHeight > 0) {
+                if (!this.options.up.isLock && !this.isFinishUp && scrollHeight > 0) {
                     const toBottom = scrollHeight - clientHeight - scrollTop;
 
                     if (toBottom <= options.up.offset) {
@@ -327,13 +308,14 @@ class Scroll {
 
         setTimeout(() => {
             // 在下一个循环中运行
-            if (!this.options.up.isLock
-                && options.up.loadFull.isEnable
+            if (
+                !this.options.up.isLock &&
+                options.up.loadFull.isEnable &&
                 // 避免无法计算高度时无限加载
-                && scrollWrap.scrollTop === 0
+                scrollWrap.scrollTop === 0 &&
                 // scrollHeight是网页内容高度（最小值是clientHeight）
-                && scrollWrap.scrollHeight > 0
-                && scrollWrap.scrollHeight <= getClientHeightByDom(scrollWrap)
+                scrollWrap.scrollHeight > 0 &&
+                scrollWrap.scrollHeight <= getClientHeightByDom(scrollWrap)
             ) {
                 this.triggerUpLoading();
             }
@@ -343,8 +325,10 @@ class Scroll {
     triggerDownLoading() {
         const options = this.options;
 
-        if (!this.hooks[HOOK_BEFORE_DOWN_LOADING] ||
-            this.hooks[HOOK_BEFORE_DOWN_LOADING](this.downHight, options.down.offset)) {
+        if (
+            !this.hooks[HOOK_BEFORE_DOWN_LOADING] ||
+            this.hooks[HOOK_BEFORE_DOWN_LOADING](this.downHight, options.down.offset)
+        ) {
             // 没有hook或者hook返回true都通过，主要是为了方便类似于秘密花园等的自定义下拉刷新动画实现
             this.downLoading = true;
             this.translateContentWrap(options.down.offset, options.down.bounceTime);
@@ -391,7 +375,7 @@ class Scroll {
 
         // 检测是否需要加载满屏
         this._loadFull();
-        
+
         this.events[EVENT_RESET_UP_LOADING] && this.events[EVENT_RESET_UP_LOADING]();
     }
 
@@ -452,7 +436,7 @@ class Scroll {
      * @param {Function} callback 回调函数
      */
     on(event, callback) {
-        if (event && typeof callback === 'function') {
+        if (event && typeof callback === "function") {
             this.events[event] = callback;
         }
     }
@@ -464,7 +448,7 @@ class Scroll {
      * @param {Function} callback 回调函数
      */
     hook(hook, callback) {
-        if (hook && typeof callback === 'function') {
+        if (hook && typeof callback === "function") {
             this.hooks[hook] = callback;
         }
     }

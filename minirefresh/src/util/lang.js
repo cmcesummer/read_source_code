@@ -1,9 +1,8 @@
 export function getNow() {
-    return window.performance &&
-        (window.performance.now ?
-            (window.performance.now() +
-                window.performance.timing.navigationStart) :
-            +new Date());
+    return (
+        window.performance &&
+        (window.performance.now ? window.performance.now() + window.performance.timing.navigationStart : +new Date())
+    );
 }
 
 export const noop = () => {};
@@ -12,18 +11,20 @@ export function isArray(object) {
     if (Array.isArray) {
         return Array.isArray(object);
     }
-    
+
     return object instanceof Array;
 }
 
 export function isObject(object) {
     const classType = Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
 
-    return classType !== 'String' &&
-        classType !== 'Number' &&
-        classType !== 'Boolean' &&
-        classType !== 'Undefined' &&
-        classType !== 'Null';
+    return (
+        classType !== "String" &&
+        classType !== "Number" &&
+        classType !== "Boolean" &&
+        classType !== "Undefined" &&
+        classType !== "Null"
+    );
 }
 
 export function isWindow(object) {
@@ -31,10 +32,12 @@ export function isWindow(object) {
 }
 
 export function isPlainObject(obj) {
-    return isObject(obj)
-        && !isWindow(obj)
+    return (
+        isObject(obj) &&
+        !isWindow(obj) &&
         // 如果不是普通的object,Object.prototype需要通过链回溯才能得到
-        && Object.getPrototypeOf(obj) === Object.prototype;
+        Object.getPrototypeOf(obj) === Object.prototype
+    );
 }
 
 export function extend(...rest) {
@@ -43,7 +46,7 @@ export function extend(...rest) {
     let sourceIndex = 1;
     let isDeep = false;
 
-    if (typeof target === 'boolean') {
+    if (typeof target === "boolean") {
         // 深赋值或false
         isDeep = target;
         target = rest[sourceIndex] || {};
@@ -61,7 +64,7 @@ export function extend(...rest) {
 
         if (source && isObject(source)) {
             // for-of打包过大
-            Object.keys(source).forEach((name) => {
+            Object.keys(source).forEach(name => {
                 const src = target[name];
                 const copy = source[name];
                 const copyIsPlainObject = isPlainObject(copy);
@@ -73,9 +76,7 @@ export function extend(...rest) {
                     return;
                 }
 
-                if (isDeep &&
-                    copy &&
-                    (copyIsArray || copyIsPlainObject)) {
+                if (isDeep && copy && (copyIsArray || copyIsPlainObject)) {
                     // 这里必须用isPlainObject,只有同样是普通的object才会复制继承
                     // 如果是FormData之流的，会走后面的覆盖路线
                     if (copyIsArray) {
@@ -84,7 +85,7 @@ export function extend(...rest) {
                     } else {
                         clone = src && isPlainObject(src) ? src : {};
                     }
-                    
+
                     target[name] = extend(isDeep, clone, copy);
                 } else if (copy !== undefined) {
                     // 如果非深赋值
@@ -106,7 +107,7 @@ export function extend(...rest) {
 export function selector(element) {
     let target = element;
 
-    if (typeof target === 'string') {
+    if (typeof target === "string") {
         target = document.querySelector(target);
     }
 
@@ -122,7 +123,7 @@ export function selector(element) {
 export function getClientHeightByDom(dom) {
     let height = dom.clientHeight;
 
-    if (dom === document.body && document.compatMode === 'CSS1Compat') {
+    if (dom === document.body && document.compatMode === "CSS1Compat") {
         // PC上body的可视区的特殊处理
         height = document.documentElement.clientHeight;
     }
@@ -142,7 +143,7 @@ export function namespace(parent, namespaceStr, target) {
         return parent;
     }
 
-    const namespaceArr = namespaceStr.split('.');
+    const namespaceArr = namespaceStr.split(".");
     const len = namespaceArr.length;
     let res = parent;
 
