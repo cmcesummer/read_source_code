@@ -128,7 +128,10 @@ export function track(
     return
   }
   const effect = activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
-  console.log(`[effect]:`, activeReactiveEffectStack[activeReactiveEffectStack.length - 1])
+  console.log(
+    `[effect - track]:`,
+    activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
+  )
   if (effect) {
     if (type === OperationTypes.ITERATE) {
       key = ITERATE_KEY
@@ -163,6 +166,7 @@ export function trigger(
   extraInfo?: any
 ) {
   const depsMap = targetMap.get(target)
+  console.log(`[effect - trigger] depsMap`, depsMap)
   if (depsMap === void 0) {
     // never been tracked
     return
