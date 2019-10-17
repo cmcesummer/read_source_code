@@ -22,6 +22,7 @@ export function ref(raw: any) {
   const v = {
     [refSymbol]: true,
     get value() {
+      console.log(`[get v]`, v)
       track(v, OperationTypes.GET, '')
       return raw
     },

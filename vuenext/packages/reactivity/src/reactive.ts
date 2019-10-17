@@ -90,6 +90,7 @@ function createReactiveObject(
     return target
   }
   // target already has corresponding Proxy
+  console.log(`[reactives - createnew]`, target)
   let observed = toProxy.get(target)
   if (observed !== void 0) {
     return observed
@@ -123,6 +124,7 @@ export function isReadonly(value: any): boolean {
 }
 
 export function toRaw<T>(observed: T): T {
+  console.log(`[toRaw reactiveToRaw]`, reactiveToRaw)
   return reactiveToRaw.get(observed) || readonlyToRaw.get(observed) || observed
 }
 

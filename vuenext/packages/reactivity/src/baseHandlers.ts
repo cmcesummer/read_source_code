@@ -14,6 +14,7 @@ const builtInSymbols = new Set(
 function createGetter(isReadonly: boolean) {
   return function get(target: any, key: string | symbol, receiver: any) {
     const res = Reflect.get(target, key, receiver)
+    console.log(`[baseHandlers - getter]`, target, key, receiver)
     if (isSymbol(key) && builtInSymbols.has(key)) {
       return res
     }
@@ -37,15 +38,19 @@ function set(
   value: any,
   receiver: any
 ): boolean {
+  console.log(`[obj set]`, target, key, value, receiver)
   value = toRaw(value)
   const hadKey = hasOwn(target, key)
   const oldValue = target[key]
   if (isRef(oldValue) && !isRef(value)) {
+    console.log(`[obj set - ]`, value)
     oldValue.value = value
     return true
   }
   const result = Reflect.set(target, key, value, receiver)
+  console.log(`[obj set -50]`, result, toRaw(receiver))
   // don't trigger if target is something up in the prototype chain of original
+
   if (target === toRaw(receiver)) {
     /* istanbul ignore else */
     if (__DEV__) {

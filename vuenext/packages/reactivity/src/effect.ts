@@ -1,6 +1,7 @@
 import { OperationTypes } from './operations'
 import { Dep, targetMap } from './reactive'
-import { EMPTY_OBJ, extend } from '@vue/shared'
+import { EMPTY_OBJ } from '@vue/shared'
+// import { EMPTY_OBJ, extend } from '@vue/shared'
 
 export const effectSymbol = Symbol(__DEV__ ? 'effect' : void 0)
 
@@ -92,6 +93,7 @@ function run(effect: ReactiveEffect, fn: Function, args: any[]): any {
     cleanup(effect)
     try {
       activeReactiveEffectStack.push(effect)
+      console.log(`[activeReactiveEffectStack]`, activeReactiveEffectStack)
       return fn(...args)
     } finally {
       activeReactiveEffectStack.pop()
@@ -128,10 +130,8 @@ export function track(
     return
   }
   const effect = activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
-  console.log(
-    `[effect - track]:`,
-    activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
-  )
+  console.log(`[effect - track - 132]:`, effect, target, key, targetMap);
+  // effect 只有调用了 effect 方法后才会设置进去， 相当于一个监听者
   if (effect) {
     if (type === OperationTypes.ITERATE) {
       key = ITERATE_KEY
@@ -140,6 +140,7 @@ export function track(
     if (depsMap === void 0) {
       targetMap.set(target, (depsMap = new Map()))
     }
+    
     let dep = depsMap.get(key!)
     if (dep === void 0) {
       depsMap.set(key!, (dep = new Set()))
@@ -147,14 +148,15 @@ export function track(
     if (!dep.has(effect)) {
       dep.add(effect)
       effect.deps.push(dep)
-      if (__DEV__ && effect.onTrack) {
-        effect.onTrack({
-          effect,
-          target,
-          type,
-          key
-        })
-      }
+      // if (__DEV__ && effect.onTrack) {
+      //   effect.onTrack({
+      //     effect,
+      //     target,
+      //     type,
+      //     key
+      //   })
+      // }
+      console.log(`[effect - track - 159]:`, targetMap, target, key, type)
     }
   }
 }
@@ -181,6 +183,7 @@ export function trigger(
   } else {
     // schedule runs for SET | ADD | DELETE
     if (key !== void 0) {
+      console.log(`[effect - trigger - 185]: effectsToAdd`, depsMap.get(key), key)
       addRunners(effects, computedRunners, depsMap.get(key))
     }
     // also run for iteration key on ADD | DELETE
@@ -221,19 +224,19 @@ function scheduleRun(
   key: string | symbol | undefined,
   extraInfo: any
 ) {
-  if (__DEV__ && effect.onTrigger) {
-    effect.onTrigger(
-      extend(
-        {
-          effect,
-          target,
-          key,
-          type
-        },
-        extraInfo
-      )
-    )
-  }
+  // if (__DEV__ && effect.onTrigger) {
+  //   effect.onTrigger(
+  //     extend(
+  //       {
+  //         effect,
+  //         target,
+  //         key,
+  //         type
+  //       },
+  //       extraInfo
+  //     )
+  //   )
+  // }
   if (effect.scheduler !== void 0) {
     effect.scheduler(effect)
   } else {

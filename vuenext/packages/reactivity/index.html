@@ -9,12 +9,27 @@
   <body>
     <script src="./dist/reactivity.global.js"></script>
     <script>
-      const { ref } = VueObserver
-      const a = ref({ a: 1 })
-
-      console.log(a.value.a)
-      a.value.a = 3
-      console.log(a.value.a)
+      const { ref, effect, reactive } = vbserver
+      const a = ref(2)
+      const b = ref(3)
+      const obj = reactive({
+        a,
+        b: {
+          c: a,
+          d: [a]
+        }
+      })
+      let dummy1
+      let dummy2
+      let dummy3
+      let dummy4
+      effect(() => {
+        dummy1 = obj.a;
+        // dummy2 = obj.b.c
+        // dummy3 = obj.b.d[0]
+      })
+      obj.a = b
+      console.log(dummy1, a.value)
     </script>
   </body>
 </html>

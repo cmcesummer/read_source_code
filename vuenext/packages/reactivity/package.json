@@ -16,7 +16,7 @@
     "url": "git+https://github.com/vuejs/vue.git"
   },
   "buildOptions": {
-    "name": "VueObserver",
+    "name": "vbserver",
     "formats": ["esm", "cjs", "global", "esm-browser"]
   },
   "keywords": [
