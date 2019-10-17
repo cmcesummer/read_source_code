@@ -124,7 +124,7 @@ export function isReadonly(value: any): boolean {
 }
 
 export function toRaw<T>(observed: T): T {
-  console.log(`[toRaw reactiveToRaw]`, reactiveToRaw)
+  // console.log(`[toRaw reactiveToRaw]`, observed)
   return reactiveToRaw.get(observed) || readonlyToRaw.get(observed) || observed
 }
 

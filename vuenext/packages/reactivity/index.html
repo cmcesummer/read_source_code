@@ -10,8 +10,7 @@
     <script src="./dist/reactivity.global.js"></script>
     <script>
       const { ref, effect, reactive } = vbserver
-      const a = ref(2)
-      const b = ref(3)
+      const a = 1
       const obj = reactive({
         a,
         b: {
@@ -22,14 +21,14 @@
       let dummy1
       let dummy2
       let dummy3
-      let dummy4
       effect(() => {
-        dummy1 = obj.a;
+        dummy1 = obj.a
         // dummy2 = obj.b.c
         // dummy3 = obj.b.d[0]
       })
-      obj.a = b
-      console.log(dummy1, a.value)
+      console.log('====')
+      obj.a++;
+      console.log(dummy1)
     </script>
   </body>
 </html>

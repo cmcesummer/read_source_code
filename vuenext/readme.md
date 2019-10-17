@@ -40,6 +40,25 @@ targetMap.set(target as Ref, new Map())
 targetMap.set(target, new Map())
 ```
 
+1. reactive函数
+
+```js
+const a = 1
+const obj = reactive({
+    a
+})
+```
+`reactive(target)`函数干了一件事： 把target加入 targetMap, 并对 target 进行 Proxy
+
+2. effect 函数
+
+```js
+effect(() => {
+    dummy1 = obj.a
+})
+```
+执行参数函数()=>{}, 在执行的过程中触发 target 的getter, 进而触发 `track`, 为 target 的每个 key 都绑定 effect;
+
 ### effect文件中
 
 1. 关于 track 函数调用： 

@@ -168,7 +168,7 @@ export function trigger(
   extraInfo?: any
 ) {
   const depsMap = targetMap.get(target)
-  console.log(`[effect - trigger] depsMap`, depsMap)
+  console.log(`[effect - trigger] depsMap`, depsMap, 'target:', target)
   if (depsMap === void 0) {
     // never been tracked
     return
@@ -183,7 +183,7 @@ export function trigger(
   } else {
     // schedule runs for SET | ADD | DELETE
     if (key !== void 0) {
-      console.log(`[effect - trigger - 185]: effectsToAdd`, depsMap.get(key), key)
+      console.log(`[effect - trigger - 185]: effectsToAdd`, depsMap.get(key), 'key:', key, '.')
       addRunners(effects, computedRunners, depsMap.get(key))
     }
     // also run for iteration key on ADD | DELETE

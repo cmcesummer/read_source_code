@@ -48,7 +48,7 @@ function set(
     return true
   }
   const result = Reflect.set(target, key, value, receiver)
-  console.log(`[obj set -50]`, result, toRaw(receiver))
+  console.log(`[obj set -50]`, result,target, toRaw(receiver))
   // don't trigger if target is something up in the prototype chain of original
 
   if (target === toRaw(receiver)) {
