@@ -5,30 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
+    <style>
+      .box {
+        border: 1px solid #e5e5e5;
+        width: 220px;
+        height: 2000px;
+        column-count: 2;
+        column-gap: 10px;
+      }
+      .inner {
+        width: 100px;
+        height: 200px;
+        border: 1px solid #000;
+        display: inline-block;
+        margin: 0 0 10px 0;
+        /* float: left; */
+      }
+      .inner:nth-child(2) {
+        height: 300px;
+      }
+    </style>
   </head>
   <body>
+    <div class="box"></div>
     <script src="./dist/reactivity.global.js"></script>
     <script>
-      const { ref, effect, reactive } = vbserver
-      const a = 1
-      const obj = reactive({
-        a,
-        b: {
-          c: a,
-          d: [a]
-        }
-      })
-      let dummy1
-      let dummy2
-      let dummy3
-      effect(() => {
-        dummy1 = obj.a
-        // dummy2 = obj.b.c
-        // dummy3 = obj.b.d[0]
-      })
-      console.log('====')
-      obj.a++;
-      console.log(dummy1)
+      const box = document.querySelector('.box')
+      box.addEventListener(
+        'touchstart',
+        e => {
+          e.preventDefault()
+          //   e.stopPropagation()
+          console.log(e)
+        },
+        false
+      )
+      //   let html = ''
+      //   for (let i = 0; i < 9; i++) {
+      //     html += `<div class="inner">${i}</div>`
+      //   }
+      //   box.innerHTML = html
+      //   document.addEventListener('drop', function(e) {
+      //     console.log('document drog')
+      //     e.preventDefault()
+      //   })
+      //   box.addEventListener('drop', e => {
+      //     e.preventDefault()
+      //     console.log()
+      //     const items = e.dataTransfer.items
+      //     for (const item of items) {
+      //       console.log(item, item.webkitGetAsEntry())
+      //     }
+      //   })
+      //   box.addEventListener('dragover', e => {
+      //     e.preventDefault()
+      //     // console.log(e)
+      //   })
+
+      const { reactive, isReactive } = vbserver
+      const original = [{ foo: 1 }, { bar: 2 }]
+      const observed = reactive(original)
+      // set
+      const value = { baz: 3 }
+      //   const reactiveValue = reactive(value)
+      observed[0] = value
+      //   console.log(observed[0])
     </script>
   </body>
 </html>

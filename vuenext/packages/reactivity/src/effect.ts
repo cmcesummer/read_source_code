@@ -130,7 +130,7 @@ export function track(
     return
   }
   const effect = activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
-  console.log(`[effect - track - 132]:`, effect, target, key, targetMap);
+  console.log(`[effect - track - 132]:`, effect, target, key, targetMap)
   // effect 只有调用了 effect 方法后才会设置进去， 相当于一个监听者
   if (effect) {
     if (type === OperationTypes.ITERATE) {
@@ -140,7 +140,7 @@ export function track(
     if (depsMap === void 0) {
       targetMap.set(target, (depsMap = new Map()))
     }
-    
+
     let dep = depsMap.get(key!)
     if (dep === void 0) {
       depsMap.set(key!, (dep = new Set()))
@@ -168,7 +168,14 @@ export function trigger(
   extraInfo?: any
 ) {
   const depsMap = targetMap.get(target)
-  console.log(`[effect - trigger] depsMap`, depsMap, 'target:', target)
+  console.log(
+    `[effect - trigger] type: ${type}, depsMap`,
+    depsMap,
+    ', target:',
+    target,
+    `, key:`,
+    key
+  )
   if (depsMap === void 0) {
     // never been tracked
     return
@@ -183,7 +190,14 @@ export function trigger(
   } else {
     // schedule runs for SET | ADD | DELETE
     if (key !== void 0) {
-      console.log(`[effect - trigger - 185]: effectsToAdd`, depsMap.get(key), 'key:', key, '.')
+      console.log(
+        `[effect - trigger - 185]: effectsToAdd`,
+        depsMap.get(key),
+        'key:',
+        key,
+        '. depsMap.get(key):',
+        depsMap.get(key)
+      )
       addRunners(effects, computedRunners, depsMap.get(key))
     }
     // also run for iteration key on ADD | DELETE

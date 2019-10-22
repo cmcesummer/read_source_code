@@ -38,17 +38,17 @@ function set(
   value: any,
   receiver: any
 ): boolean {
-  console.log(`[obj set]`, target, key, value, receiver)
   value = toRaw(value)
   const hadKey = hasOwn(target, key)
   const oldValue = target[key]
+  console.log(`[obj set]`, target, key, hadKey, value, oldValue, receiver)
   if (isRef(oldValue) && !isRef(value)) {
     console.log(`[obj set - ]`, value)
     oldValue.value = value
     return true
   }
   const result = Reflect.set(target, key, value, receiver)
-  console.log(`[obj set -50]`, result,target, toRaw(receiver))
+  console.log(`[obj set -50]`, result, target, toRaw(receiver))
   // don't trigger if target is something up in the prototype chain of original
 
   if (target === toRaw(receiver)) {
