@@ -131,7 +131,7 @@ export function track(
     return
   }
   const effect = activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
-  console.log(`[effect - track - 132]:`, effect, target, key, targetMap)
+  console.log(`[effect - track - 132]:`, target, key, targetMap, !!effect)
   // effect 只有调用了 effect 方法后才会设置进去， 相当于一个监听者
   if (effect) {
     if (type === OperationTypes.ITERATE) {
