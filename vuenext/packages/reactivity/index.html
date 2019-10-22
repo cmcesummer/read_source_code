@@ -62,14 +62,25 @@
       //     // console.log(e)
       //   })
 
-      const { reactive, isReactive } = vbserver
-      const original = [{ foo: 1 }, { bar: 2 }]
-      const observed = reactive(original)
-      // set
-      const value = { baz: 3 }
-      //   const reactiveValue = reactive(value)
-      observed[0] = value
-      //   console.log(observed[0])
+      const { reactive, isReactive, ref, effect } = vbserver
+
+      let dummy,
+        times = 0
+
+      const obj = reactive({ prop: 'value', run: true })
+
+      effect(() => {
+        dummy = obj.run ? obj.prop : 'other'
+        times++
+        console.log(`run times: ${times}`)
+      })
+      console.log(`===========`, dummy)
+      obj.prop = 'aaa'
+      console.log(`===========`, dummy)
+      obj.run = false
+      console.log(`===========`, dummy)
+      obj.prop = 'sss'
+      console.log(`===========`, dummy)
     </script>
   </body>
 </html>

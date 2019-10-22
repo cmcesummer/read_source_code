@@ -89,6 +89,7 @@ function run(effect: ReactiveEffect, fn: Function, args: any[]): any {
   if (!effect.active) {
     return fn(...args)
   }
+  //   console.log(activeReactiveEffectStack, '***************')
   if (activeReactiveEffectStack.indexOf(effect) === -1) {
     cleanup(effect)
     try {

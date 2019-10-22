@@ -69,8 +69,21 @@ effect(() => {
 ### effect 文件中
 
 1. 关于 track 函数调用：
+
    - ref get value 的时候一次 track(Ref, 'get', '')
    - baseHandlers 中， Proxy 的 getter 中一次 track(target, 'get', key)
+
+2. run 函数内部 `(activeReactiveEffectStack.indexOf(effect) === -1) {}` 是为了防止内部隐士循环递归调用：例如：
+
+```js
+const counter = reactive({ num: 0 })
+let times = 0
+effect(() => {
+  counter.num++
+  times++
+  console.log(`run times: ${times}`)
+})
+```
 
 #### Proxy
 
