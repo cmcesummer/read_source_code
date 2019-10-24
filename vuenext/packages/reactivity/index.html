@@ -8,18 +8,22 @@
     <style>
       .box {
         border: 1px solid #e5e5e5;
-        width: 220px;
-        height: 2000px;
-        column-count: 2;
-        column-gap: 10px;
+        width: 50%;
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .inner {
         width: 100px;
-        height: 200px;
-        border: 1px solid #000;
-        display: inline-block;
-        margin: 0 0 10px 0;
-        /* float: left; */
+        height: 50px;
+        /* border: 1px solid #000; */
+        border-top: 0 solid transparent;
+        border-left: 50px solid transparent;
+        border-right: 50px solid transparent;
+        border-bottom: 50px solid #000;
+        box-sizing: border-box;
+        /* float: left;*/
       }
       .inner:nth-child(2) {
         height: 300px;
@@ -27,7 +31,7 @@
     </style>
   </head>
   <body>
-    <div class="box"></div>
+    <div class="box"><div class="inner"></div></div>
     <script src="./dist/reactivity.global.js"></script>
     <script>
       const box = document.querySelector('.box')
