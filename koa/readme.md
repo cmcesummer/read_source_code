@@ -41,3 +41,7 @@ fnMiddle(ctxs).then(() => {
     return ctxs.res.end(ctxs.body);
 });
 ```
+
+### 返回的形式
+
+使用的是 `res.end(JSON.stringify(object))`,
